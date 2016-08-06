@@ -1,0 +1,14 @@
+OASISFormat: 0.4
+Name:        Crab
+Version:     0.0.1
+Synopsis:    A simple compiler as an educational project
+Authors:     Heasummn
+License:     MIT
+Plugins:     META (0.4), DevFiles (0.4)
+BuildTools:  ocamlbuild, menhir
+
+Executable "crab"
+  Path:           	.
+  MainIs:         	crab.ml
+  Install:        	true
+  CompiledObject: 	best
