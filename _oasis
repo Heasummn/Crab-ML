@@ -8,8 +8,25 @@ Plugins:     META (0.4), DevFiles (0.4)
 BuildTools:  ocamlbuild, menhir
 
 Executable "crab"
-  Path:           	src/
+  Path:           	src
   MainIs:         	crab.ml
   Install:        	true
   CompiledObject: 	best
-  BuildDepends: 	core, threads
+  BuildDepends: 	  core, threads
+
+Library crab
+  Path:             src
+  Modules:          Crab, Ast
+
+Executable test_lexing
+  Path:				      test/lexing
+  Build$: 		      flag(tests)
+  Install: 			    false
+  CompiledObject:	  best
+  MainIs:			      test_lex.ml
+  BuildDepends: 	  oUnit, crab
+
+Test "lexing"
+  Command: 			    $test_lexing
+  TestTools:		    test_lexing
+  Run$:				      flag(tests)

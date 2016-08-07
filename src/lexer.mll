@@ -29,7 +29,9 @@ rule read =
 	| eof 			{ EOF }
 
 	| ';' 			{ SEMI }
+
 	| _ 			{ raise (SyntaxError (
 			"Unknown identifier: " ^ (Lexing.lexeme lexbuf) ^ 
 			"\n    At line: " ^ (string_of_int (get_line lexbuf)) ^
-			", Column: " ^ string_of_int (get_col lexbuf))) }
+			", Column: " ^ string_of_int (get_col lexbuf))) 
+					}

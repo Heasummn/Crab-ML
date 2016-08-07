@@ -1,3 +1,6 @@
-PKG core
+PKG core oUnit
 S src/
+S test/lexing
+
 B _build/src
+B _build/test/lexing

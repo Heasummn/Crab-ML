@@ -8,6 +8,7 @@
 *.cmxs
 *.cmxa
 
+
 # ocamlbuild working directory
 _build/
 
@@ -18,3 +19,6 @@ _build/
 # oasis generated files
 setup.*
 myocamlbuild.ml
+*.mldylib
+*.mllib
+META
