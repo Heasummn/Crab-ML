@@ -12,3 +12,4 @@ Executable "crab"
   MainIs:         	crab.ml
   Install:        	true
   CompiledObject: 	best
+  BuildDepends: 	core, threads
