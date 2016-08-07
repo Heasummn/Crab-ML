@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: c8fce5dfc4d6a8beb010290ec7d13b0f)
+# DO NOT EDIT (digest: 452a2797920d8bb9a2974ce95cd81a83)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -15,9 +15,9 @@ true: annot, bin_annot
 "_darcs": -traverse
 "_darcs": not_hygienic
 # Executable crab
-<crab.{native,byte}>: pkg_core
-<crab.{native,byte}>: pkg_threads
-<*.ml{,i,y}>: pkg_core
-<*.ml{,i,y}>: pkg_threads
+<src/crab.{native,byte}>: pkg_core
+<src/crab.{native,byte}>: pkg_threads
+<src/*.ml{,i,y}>: pkg_core
+<src/*.ml{,i,y}>: pkg_threads
 # OASIS_STOP
 true: use_menhir
