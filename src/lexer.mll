@@ -17,7 +17,7 @@
 let digit = ['0'-'9']
 let int = digit+
 let e = ['e' 'E']
-let float = int '.' int e? '-'? int
+let float = int '.' int e? '-'? int?
 
 (* Whitespace *)
 let whitespace = [' ' '\t']+
