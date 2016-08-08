@@ -20,7 +20,7 @@ if [ "$1" == "build" ]; then
 	fi
 
 	if grep -q 'mark_tag_used("tests")' myocamlbuild.ml; then
-		echo "Doing nothing" # Again, do nothing
+		: # Again, do nothing
 	else
 		echo "" >> myocamlbuild.ml
 		echo 'mark_tag_used("tests")' >> myocamlbuild.ml
@@ -36,7 +36,21 @@ if [ "$1" == "build" ]; then
 	mv crab.native crab || exit
 
 	if [ "$2" == "run" ]; then
-		./crab $3 || exit
+		if [ -f crab ]; then
+			./crab $3 || exit
+		else
+			echo "
+
+			Please build by running 'run build'"
+		fi 
+	else 
+		if [ -f crab ]; then
+			./crab $2 || exit
+		else
+			echo "
+
+			Please build by running 'run build'"
+		fi
 	fi
 
 elif [ "$1" == "tests" ]; then
@@ -51,12 +65,20 @@ elif [ "$1" == "run" ]; then
 
 		Please build by running 'run build'"
 	else
-		./crab $2 || echo "
+		if [ -f crab ]; then
+			./crab $2 || exit
+		else
+			echo "
 
-		Please build by running 'run build', and ensure that a correct file is given"
+			Please build by running 'run build'"
+		fi
 	fi
 else
-	./crab $1 || echo "
+	if [ -f crab ]; then
+			./crab $1 || exit
+		else
+			echo "
 
-		Please build by running 'run build', and ensure that a correct file is given"
+			Please build by running 'run build'"
+		fi
 fi
