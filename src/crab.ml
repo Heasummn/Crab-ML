@@ -13,6 +13,8 @@ let rec rep_expr = function
 	| Lit(e1)		-> rep_literal e1
 	| Add(e1, e2)	-> rep_expr e1 ^ " + " ^ rep_expr e2 
 	| Sub(e1, e2)	-> rep_expr e1 ^ " - " ^ rep_expr e2
+	| Mult(e1, e2)	-> rep_expr e1 ^ " * " ^ rep_expr e2
+	| Div(e1, e2)	-> rep_expr e1 ^ " / " ^ rep_expr e2
 	| Neg(e1)		-> "-" ^ rep_expr e1
 	| Paren(e1)		-> "(" ^ rep_expr e1 ^ ")"
 
@@ -27,6 +29,8 @@ let rec eval_expr = function
 	| Lit(e1)		-> eval_literal e1
 	| Add(e1, e2)	-> eval_expr e1 +. eval_expr e2
 	| Sub(e1, e2)	-> eval_expr e1 -. eval_expr e2
+	| Mult(e1, e2)	-> eval_expr e1 *. eval_expr e2
+	| Div(e1, e2)	-> eval_expr e1 /. eval_expr e2
 	| Neg(e1)		-> ~-. (eval_expr e1)
 	| Paren(e1)		-> eval_expr e1
 

@@ -34,12 +34,24 @@ rule read =
 
 	| '+'			{ PLUS }
 	| '-'			{ MINUS }
+	| '*'			{ MULT }
+	| '/'			{ DIV }
 	| '('			{ LPAREN }
 	| ')'			{ RPAREN }
 	| ';' 			{ SEMI }
+
+	| "(-"			{ nested_comment 1 lexbuf }
 
 	| _ 			{ raise (SyntaxError (
 			"Unknown identifier: " ^ (Lexing.lexeme lexbuf) ^ 
 			"\n    At line: " ^ (string_of_int (get_line lexbuf)) ^
 			", Column: " ^ string_of_int (get_col lexbuf))) 
 					}
+
+
+and nested_comment level =
+	parse
+	| "(-"		{ nested_comment (level+1) lexbuf }
+	| "-)"		{ if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
+	| newline 	{ Lexing.new_line lexbuf; nested_comment level lexbuf }
+	| _			{ nested_comment level lexbuf }

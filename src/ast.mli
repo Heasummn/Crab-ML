@@ -3,8 +3,10 @@ type literal =
 	| Float of float
 
 type ast = 
+	| Paren of ast
+	| Neg of ast
+	| Mult of ast * ast
+	| Div of ast * ast
 	| Add of ast * ast
 	| Sub of ast * ast
-	| Neg of ast
-	| Paren of ast
 	| Lit of literal
