@@ -34,7 +34,8 @@ rule read =
 
 	| '+'			{ PLUS }
 	| '-'			{ MINUS }
-
+	| '('			{ LPAREN }
+	| ')'			{ RPAREN }
 	| ';' 			{ SEMI }
 
 	| _ 			{ raise (SyntaxError (

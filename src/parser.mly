@@ -6,6 +6,7 @@
 %token <float>	FLOAT
 
 /* Operators */
+%token LPAREN RPAREN
 %token PLUS MINUS
 
 %token 			EOF
@@ -21,26 +22,28 @@
 %%
 
 program:
-	| stmts = statements EOF			
+	| stmts = exprs EOF			
 			{ stmts }
 	;
 
-/* Empty, or a statement with more statements */
-statements:
+/* Empty, or a expr with more exprs */
+exprs:
 	| 									{ [] }
-	| stmt = statement; SEMI;
-	 	stmts = statements 	
+	| stmt = expr; SEMI;
+	 	stmts = exprs 	
 	 		{ stmt :: stmts } 
 	;
 
-statement:
-	| e1 = literal				
+expr:
+	| e1 = literal
 		{ Lit e1 }
-	| e1 = statement MINUS e2 = statement
+	| LPAREN e1=expr RPAREN
+		{ Paren e1 }
+	| e1 = expr MINUS e2 = expr
 		{ Sub (e1, e2) }
-	| e1 = statement PLUS e2 = statement
+	| e1 = expr PLUS e2 = expr
     	{ Add (e1, e2) }
-    | MINUS e1 = statement 	%prec UMINUS
+    | MINUS e1 = expr 	%prec UMINUS
     	{ Neg e1 }
 	;
 
