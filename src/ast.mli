@@ -1,2 +1,3 @@
 type ast =
-	| Integer of int 
+	| Integer of int
+	| Float of float

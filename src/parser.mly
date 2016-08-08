@@ -2,10 +2,12 @@
 	open Ast
 %}
 
-%token <int> INT
-%token EOF
+%token <int> 	INT
+%token <float>	FLOAT
 
-(* Non keywords *)
+%token 			EOF
+
+/* Non keywords */
 %token SEMI
 
 %start <Ast.ast list> program
@@ -24,4 +26,5 @@ statements:
 
 statement:
 	| i = INT 					{ Integer i }
+	| f = FLOAT 				{ Float f }
 	;

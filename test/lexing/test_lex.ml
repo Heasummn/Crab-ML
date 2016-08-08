@@ -3,9 +3,10 @@ open Lexer
 open Lexing
 open Parser
 let extract token = match token with
-	| Parser.INT(x) -> string_of_int x
-	| SEMI			-> ";"
-	| EOF 			-> "EOF"
+	| Parser.INT(x) 	-> string_of_int x
+	| Parser.FLOAT(x)	-> string_of_float x
+	| SEMI				-> ";"
+	| EOF 				-> "EOF"
 
 let lex lexbuf = 
 	let rec recurse lexbuf tokens =

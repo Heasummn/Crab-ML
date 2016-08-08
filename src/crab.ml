@@ -5,7 +5,8 @@ open Lexer
 let filename = Sys.argv.(1)
 
 let print_expr (expr) = match expr with
-	| Integer(x) -> print_endline ( string_of_int x )
+	| Integer(x)	-> print_endline ( string_of_int x )
+	| Float(x)		-> print_endline ( string_of_float x ) 
 
 let parse lexbuf = Parser.program Lexer.read lexbuf
 

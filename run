@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+clear
+
+if [ "$1" == "build" ]; then 
+
+	# First, clean up
+	make clean distclean || exit
+	clear
+
+	# Then, setup Oasis
+	oasis setup || exit
+
+	# Afterwards, add stuff to the files
+	if grep -q "use_menhir" _tags; then
+		: # Do nothing
+	else
+		echo "" >> _tags
+		echo "true: use_menhir" >> _tags
+	fi
+
+	if grep -q 'mark_tag_used("tests")' myocamlbuild.ml; then
+		echo "Doing nothing" # Again, do nothing
+	else
+		echo "" >> myocamlbuild.ml
+		echo 'mark_tag_used("tests")' >> myocamlbuild.ml
+	fi
+
+	./configure
+
+	# Finally, build
+	make build || exit
+
+	clear
+
+	mv crab.native crab || exit
+
+	if [ "$2" == "run" ]; then
+		./crab $3 || exit
+	fi
+
+elif [ "$1" == "tests" ]; then
+	make clean distclean || exit
+	./configure --enable-tests || exit
+	clear
+	make test || exit
+
+elif [ "$1" == "run" ]; then
+	if [ "$2" == "test" ]; then
+		make test || echo "
+
+		Please build by running 'run build'"
+	else
+		./crab $2 || echo "
+
+		Please build by running 'run build', and ensure that a correct file is given"
+	fi
+else
+	./crab $1 || echo "
+
+		Please build by running 'run build', and ensure that a correct file is given"
+fi
