@@ -22,3 +22,6 @@ myocamlbuild.ml
 *.mldylib
 *.mllib
 META
+
+# The executable
+crab
