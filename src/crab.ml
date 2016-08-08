@@ -11,7 +11,8 @@ let rep_literal = function
 let rec rep_expr = function
 	| Lit(e1)		-> rep_literal e1
 	| Add(e1, e2)	-> rep_expr e1 ^ " + " ^ rep_expr e2 
-	| Sub(e1, e2)	-> rep_expr e1 ^ " - " ^ rep_expr e2 
+	| Sub(e1, e2)	-> rep_expr e1 ^ " - " ^ rep_expr e2
+	| Neg(e1)		-> "-" ^ rep_expr e1
 
 let parse lexbuf = Parser.program Lexer.read lexbuf
 

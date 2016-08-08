@@ -15,6 +15,7 @@
 
 /* Associativity */
 %left PLUS MINUS
+%nonassoc UMINUS
 
 %start <Ast.ast list> program
 %%
@@ -39,6 +40,8 @@ statement:
 		{ Sub (e1, e2) }
 	| e1 = statement PLUS e2 = statement
     	{ Add (e1, e2) }
+    | MINUS e1 = statement 	%prec UMINUS
+    	{ Neg e1 }
 	;
 
 literal:
