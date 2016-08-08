@@ -15,9 +15,9 @@
 
 (* Values *)
 let digit = ['0'-'9']
-let int = '-'?digit+
+let int = digit+
 let e = ['e' 'E']
-let float = int '.' digit+ e? int
+let float = int '.' digit+ e? '-'? int
 
 (* Whitespace *)
 let whitespace = [' ' '\t']+
@@ -31,6 +31,9 @@ rule read =
 	| whitespace	{ read lexbuf }
 	| newline 		{ Lexing.new_line lexbuf; read lexbuf }
 	| eof 			{ EOF }
+
+	| '+'			{ PLUS }
+	| '-'			{ MINUS }
 
 	| ';' 			{ SEMI }
 
