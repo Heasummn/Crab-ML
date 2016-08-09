@@ -48,7 +48,11 @@ if [ "$1" == "build" ]; then
 			echo "
 
 			Please build by running 'run build'"
-		fi 
+		fi
+	elif [ "$2" == "tests" ]; then
+		./configure --enable-tests
+		clear
+		make test || exit
 	else 
 		if [ -f crab ]; then
 			./crab $2 || exit
@@ -59,17 +63,11 @@ if [ "$1" == "build" ]; then
 		fi
 	fi
 
-elif [ "$1" == "tests" ]; then
-	make clean distclean || exit
-	./configure --enable-tests || exit
-	clear
-	make test || exit
-
 elif [ "$1" == "run" ]; then
-	if [ "$2" == "test" ]; then
+	if [ "$2" == "tests" ]; then
 		make test || echo "
 
-		Please build by running 'run build'"
+		Please build by running 'run build tests'"
 	else
 		if [ -f crab ]; then
 			./crab $2 || exit
@@ -79,6 +77,10 @@ elif [ "$1" == "run" ]; then
 			Please build by running 'run build'"
 		fi
 	fi
+elif [ "$1" == "tests" ]; then
+	make test || echo "
+
+		Please build by running 'run build tests'"
 else
 	if [ -f crab ]; then
 			./crab $1 || exit

@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 18eef35cefeaae096ed0be34bd4af29d)
+# DO NOT EDIT (digest: 9b602c1094164da00ad4c5e7346df57c)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -38,12 +38,16 @@ true: annot, bin_annot
 <src/*.ml{,i,y}>: use_CrabCodegen
 <src/*.ml{,i,y}>: use_CrabParsing
 # Executable test_lexing
+<test/lexing/test_lex.{native,byte}>: pkg_batteries
 <test/lexing/test_lex.{native,byte}>: pkg_menhirLib
 <test/lexing/test_lex.{native,byte}>: pkg_oUnit
+<test/lexing/test_lex.{native,byte}>: pkg_str
 <test/lexing/test_lex.{native,byte}>: use_CrabAst
 <test/lexing/test_lex.{native,byte}>: use_CrabParsing
+<test/lexing/*.ml{,i,y}>: pkg_batteries
 <test/lexing/*.ml{,i,y}>: pkg_menhirLib
 <test/lexing/*.ml{,i,y}>: pkg_oUnit
+<test/lexing/*.ml{,i,y}>: pkg_str
 <test/lexing/*.ml{,i,y}>: use_CrabAst
 <test/lexing/*.ml{,i,y}>: use_CrabParsing
 # OASIS_STOP

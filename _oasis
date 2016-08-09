@@ -43,7 +43,7 @@ Executable test_lexing
   Install: 			    false
   CompiledObject:	  best
   MainIs:			      test_lex.ml
-  BuildDepends: 	  oUnit, Crab.CrabParsing
+  BuildDepends: 	  oUnit, str, batteries, Crab.CrabParsing
 
 Test "lexing"
   Command: 			    $test_lexing
