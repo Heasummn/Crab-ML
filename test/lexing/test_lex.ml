@@ -38,14 +38,24 @@ let test_int_lex test_ctxt =
 	let lexed = lex_from_string "-42" in
 	assert_list ~msg:"Integer Value" ["-"; "42"; "EOF"] lexed
 
-let test_program_lex test_ctxt = 
+let test_int_program_lex test_ctxt = 
 	let lexed = lex_from_string "004; -36; 		-087;" in
-	assert_list ~msg:"Lex whole program" ["4"; ";"; "-"; "36"; ";"; "-"; "87"; ";"; "EOF"] lexed
+	assert_list ~msg:"Whole program" ["4"; ";"; "-"; "36"; ";"; "-"; "87"; ";"; "EOF"] lexed
+
+let test_float_lex test_ctxt = 
+	let lexed = lex_from_string "47.314" in
+	assert_list ~msg:"Float Value" ["47.314"; "EOF"] lexed
+
+let test_float_e_lex test_ctxt =
+	let lexed = lex_from_string "341.31e-5" in  (* Values get internally converted *)
+	assert_list ~msg:"Float E value" ["0.0034131"; "EOF"] lexed
 
 let suite = 
 	"Lexing">:::
-		["Test Lexing of Integers">::	test_int_lex;
-		 "Text Lexing of program">::	test_program_lex
+		["Test Lexing of Integers">::			test_int_lex;
+		 "Text Lexing of Integer program">::	test_int_program_lex;
+		 "Test Lexing of Floats">::				test_float_lex;
+		 "Test Lexing of Floats with E">::		test_float_e_lex
 		];;
 
 let () = run_test_tt_main suite
