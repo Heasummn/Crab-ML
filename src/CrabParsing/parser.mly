@@ -1,5 +1,5 @@
 %{
-    open Ast
+    open CrabAst
 %}
 
 %token <int>    INT
@@ -19,7 +19,7 @@
 %left MULT DIV
 %nonassoc UMINUS
 
-%start <Ast.ast list> program
+%start <CrabAst.ast list> program
 %%
 
 /* Program ->

@@ -5,21 +5,37 @@ Synopsis:    A simple compiler as an educational project
 Authors:     Heasummn
 License:     MIT
 Plugins:     META (0.4), DevFiles (0.4)
-BuildTools:  ocamlbuild, menhir
+BuildTools:  ocamlbuild
 AlphaFeatures: ocamlbuild_more_args
 XOCamlbuildExtraArgs: '-use-menhir -menhir "menhir --table"'
+
+Library "Crab"
+  Path:             src
+  Modules:          Crab
+
+Library "CrabAst"
+  FindLibParent:    Crab
+  Path:             src/CrabAst
+
+Library "CrabCodegen"
+  FindLibParent:    Crab
+  Path:             src/CrabCodegen
+  Modules:          CrabCodegen
+  BuildDepends:     Crab.CrabAst, llvm
+
+Library "CrabParsing"
+  FindLibParent:    Crab
+  Path:             src/CrabParsing
+  Modules:          Error, Lexer, Parser
+  BuildDepends:     menhirLib, Crab.CrabAst
+  BuildTools+:      menhir
 
 Executable "crab"
   Path:             src
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     llvm, menhirLib
-
-
-Library crab
-  Path:             src
-  Modules:          Crab, Ast, Codegen, Error
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing
 
 Executable test_lexing
   Path:				      test/lexing
@@ -27,9 +43,9 @@ Executable test_lexing
   Install: 			    false
   CompiledObject:	  best
   MainIs:			      test_lex.ml
-  BuildDepends: 	  oUnit, crab
+  BuildDepends: 	  oUnit, Crab.CrabParsing
 
 Test "lexing"
   Command: 			    $test_lexing
   TestTools:		    test_lexing
-  Run$:				      flag(tests)
+  Run$: flag(tests)
