@@ -5,12 +5,16 @@
   exception SyntaxError of string
 
   let get_line lexbuf = 
-  	let pos = lexbuf.lex_curr_p in
-  		pos.pos_lnum
+    let pos = lexeme_start_p lexbuf in
+        pos.pos_lnum
 
-  let get_col lexbuf =
-  	let pos = lexbuf.lex_curr_p in
-  		pos.pos_cnum - pos.pos_bol
+  let get_start_col lexbuf =
+    let pos = lexeme_start_p lexbuf in
+        pos.pos_cnum - pos.pos_bol + 1
+
+  let get_end_col lexbuf = 
+    let pos = lexeme_end_p lexbuf in
+        pos.pos_cnum - pos.pos_bol + 1
 }
 
 (* Values *)
@@ -24,39 +28,40 @@ let whitespace = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
 rule read = 
-	parse
-	| int			{ INT (int_of_string (Lexing.lexeme lexbuf)) }
-	| float			{ FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
+    parse
+    | int           { INT (int_of_string (Lexing.lexeme lexbuf)) }
+    | float         { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
 
-	| whitespace	{ read lexbuf }
-	| newline 		{ Lexing.new_line lexbuf; read lexbuf }
-	| eof 			{ EOF }
+    | whitespace    { read lexbuf }
+    | newline       { Lexing.new_line lexbuf; read lexbuf }
+    | eof           { EOF }
 
-	| '+'			{ PLUS }
-	| '-'			{ MINUS }
-	| '*'			{ MULT }
-	| '/'			{ DIV }
-	| '('			{ LPAREN }
-	| ')'			{ RPAREN }
-	| ';' 			{ SEMI }
+    | '+'           { PLUS }
+    | '-'           { MINUS }
+    | '*'           { MULT }
+    | '/'           { DIV }
+    | '('           { LPAREN }
+    | ')'           { RPAREN }
+    | ';'           { SEMI }
 
-	| "(*"			{ nested_comment 1 lexbuf }
-	| "//"			{ comment lexbuf }
+    | "(*"          { nested_comment 1 lexbuf }
+    | "//"          { comment lexbuf }
 
-	| _ 			{ raise (SyntaxError (
-			"Unknown identifier: " ^ (Lexing.lexeme lexbuf) ^ 
-			"\n    At line: " ^ (string_of_int (get_line lexbuf)) ^
-			", Column: " ^ string_of_int (get_col lexbuf))) 
-					}
+    | _             { raise (SyntaxError (
+            "Unknown identifier(s): " ^ (Lexing.lexeme lexbuf) ^ 
+            "\n\tAt line: " ^ (string_of_int (get_line lexbuf)) ^
+            ", Columns: " ^ string_of_int (get_start_col lexbuf) ^
+            "-" ^ string_of_int(get_end_col lexbuf)))
+                    }
 
 and comment =
-	parse
-	| newline 	{ Lexing.new_line lexbuf; read lexbuf }
-	| _			{ comment lexbuf }
+    parse
+    | newline   { Lexing.new_line lexbuf; read lexbuf }
+    | _         { comment lexbuf }
 
 and nested_comment level =
-	parse
-	| "(*"		{ nested_comment (level+1) lexbuf }
-	| "*)"		{ if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
-	| newline 	{ Lexing.new_line lexbuf; nested_comment level lexbuf }
-	| _			{ nested_comment level lexbuf }
+    parse
+    | "(*"      { nested_comment (level+1) lexbuf }
+    | "*)"      { if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
+    | newline   { Lexing.new_line lexbuf; nested_comment level lexbuf }
+    | _         { nested_comment level lexbuf }
