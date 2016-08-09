@@ -6,13 +6,15 @@ Authors:     Heasummn
 License:     MIT
 Plugins:     META (0.4), DevFiles (0.4)
 BuildTools:  ocamlbuild, menhir
+AlphaFeatures: ocamlbuild_more_args
+XOCamlbuildExtraArgs: '-use-menhir -menhir "menhir --table" -package menhirLib'
 
 Executable "crab"
-  Path:           	src
-  MainIs:         	crab.ml
-  Install:        	true
-  CompiledObject: 	best
-  BuildDepends: 	  llvm, core, threads
+  Path:             src
+  MainIs:           crab.ml
+  Install:          true
+  CompiledObject:   best
+  BuildDepends:     llvm, core, threads
   NativeOpt:        -w +A-4-6-9-41-42-44 -warn-error +1..49-33 -safe-string -strict-sequence
 
 

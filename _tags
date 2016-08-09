@@ -33,4 +33,3 @@ true: annot, bin_annot
 <test/lexing/*.ml{,i,y}>: pkg_oUnit
 <test/lexing/*.ml{,i,y}>: use_crab
 # OASIS_STOP
-true: use_menhir
