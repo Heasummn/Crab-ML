@@ -40,7 +40,8 @@ rule read =
 	| ')'			{ RPAREN }
 	| ';' 			{ SEMI }
 
-	| "(-"			{ nested_comment 1 lexbuf }
+	| "(*"			{ nested_comment 1 lexbuf }
+	| "//"			{ comment lexbuf }
 
 	| _ 			{ raise (SyntaxError (
 			"Unknown identifier: " ^ (Lexing.lexeme lexbuf) ^ 
@@ -48,10 +49,14 @@ rule read =
 			", Column: " ^ string_of_int (get_col lexbuf))) 
 					}
 
+and comment =
+	parse
+	| newline 	{ Lexing.new_line lexbuf; read lexbuf }
+	| _			{ comment lexbuf }
 
 and nested_comment level =
 	parse
-	| "(-"		{ nested_comment (level+1) lexbuf }
-	| "-)"		{ if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
+	| "(*"		{ nested_comment (level+1) lexbuf }
+	| "*)"		{ if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
 	| newline 	{ Lexing.new_line lexbuf; nested_comment level lexbuf }
 	| _			{ nested_comment level lexbuf }

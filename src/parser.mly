@@ -38,7 +38,7 @@ exprs:
 expr:
 	| e1 = literal
 		{ Lit e1 }
-	| LPAREN e1=expr RPAREN
+	| LPAREN e1 = expr RPAREN
 		{ Paren e1 }
 	| e1 = expr MULT e2 = expr
 		{ Mult (e1, e2) }

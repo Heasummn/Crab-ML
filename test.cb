@@ -4,7 +4,8 @@
 35 - -64;
 ----------------- ------------------6 + 4;
 
-(- Wow look at these comments -)
+(* Look at these wonderful comments *)
+3 * (-4 * -3); // Test test
 
 12.4 + 5;
 
