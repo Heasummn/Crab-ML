@@ -1,5 +1,5 @@
 open Llvm
-open Ast
+open CrabAst
 
 let context = global_context ()
 let glob_module = create_module context "Crab"
