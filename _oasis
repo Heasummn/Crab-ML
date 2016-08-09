@@ -12,13 +12,13 @@ Executable "crab"
   MainIs:         	crab.ml
   Install:        	true
   CompiledObject: 	best
-  BuildDepends: 	  core, threads
-  NativeOpt:        -w +A-4-6-9-41-42-44 -warn-error +1..49 -safe-string -strict-sequence
+  BuildDepends: 	  llvm, core, threads
+  NativeOpt:        -w +A-4-6-9-41-42-44 -warn-error +1..49-33 -safe-string -strict-sequence
 
 
 Library crab
   Path:             src
-  Modules:          Crab, Ast
+  Modules:          Crab, Ast, Codegen
 
 Executable test_lexing
   Path:				      test/lexing

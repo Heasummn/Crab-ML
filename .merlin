@@ -1,4 +1,4 @@
-PKG core oUnit
+PKG core oUnit llvm
 S src/
 S test/lexing
 
