@@ -1,6 +1,5 @@
 {
   open Parser
-  open Lexing
   open Error
 }
 

@@ -1,4 +1,3 @@
-open! Core.Std
 open Ast
 open Codegen
 
@@ -19,13 +18,13 @@ let rec rep_expr = function
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
 
 
-let print_ast (tree) = List.iter ~f:(fun x -> print_endline (rep_expr x)) tree
+let print_ast (tree) = List.iter (fun x -> print_endline (rep_expr x)) tree
 
 let main () = 
     let input = open_in filename in
     try
         let parsed = Parse.process_chan input in
-        List.iter ~f:(dump_val) (codegen_ast parsed)
+        List.iter dump_val (codegen_ast parsed)
     with 
         | Error.SyntaxError (msg) -> Printf.fprintf stderr "Syntax Error: %s\n" msg
         | Error.ParsingError(msg) -> Printf.fprintf stderr "Parsing Error: %s\n" msg

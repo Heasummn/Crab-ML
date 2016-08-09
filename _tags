@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: e6f4f7fceb0fe89d3228ae6641fa5953)
+# DO NOT EDIT (digest: 6d784c570f19df75fbe09f05e728151b)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -15,23 +15,21 @@ true: annot, bin_annot
 "_darcs": -traverse
 "_darcs": not_hygienic
 # Executable crab
-<src/crab.{native,byte}>: oasis_executable_crab_native
-<src/*.ml{,i,y}>: oasis_executable_crab_native
-<src/crab.{native,byte}>: pkg_core
 <src/crab.{native,byte}>: pkg_llvm
 <src/crab.{native,byte}>: pkg_menhirLib
-<src/crab.{native,byte}>: pkg_threads
-<src/*.ml{,i,y}>: pkg_core
 <src/*.ml{,i,y}>: pkg_llvm
 <src/*.ml{,i,y}>: pkg_menhirLib
-<src/*.ml{,i,y}>: pkg_threads
 # Library crab
 "src/crab.cmxs": use_crab
 # Executable test_lexing
-<test/lexing/test_lex.{native,byte}>: oasis_executable_test_lexing_native
-<test/lexing/*.ml{,i,y}>: oasis_executable_test_lexing_native
 <test/lexing/test_lex.{native,byte}>: pkg_oUnit
 <test/lexing/test_lex.{native,byte}>: use_crab
 <test/lexing/*.ml{,i,y}>: pkg_oUnit
 <test/lexing/*.ml{,i,y}>: use_crab
 # OASIS_STOP
+
+
+# _TAGS ADDED
+<src/parser.*>: warn(+A-4-6-9-40..42-44), warn_error(+1..49), strict_sequence, safe_string
+<src/*.ml{,i}>: warn(+A-4-6-9-40-42-44), warn_error(+1..49), strict_sequence, safe_string
+
