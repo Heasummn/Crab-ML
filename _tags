@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 990e8e294cec4077ff7ae3d3bd64d214)
+# DO NOT EDIT (digest: e6f4f7fceb0fe89d3228ae6641fa5953)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -19,9 +19,11 @@ true: annot, bin_annot
 <src/*.ml{,i,y}>: oasis_executable_crab_native
 <src/crab.{native,byte}>: pkg_core
 <src/crab.{native,byte}>: pkg_llvm
+<src/crab.{native,byte}>: pkg_menhirLib
 <src/crab.{native,byte}>: pkg_threads
 <src/*.ml{,i,y}>: pkg_core
 <src/*.ml{,i,y}>: pkg_llvm
+<src/*.ml{,i,y}>: pkg_menhirLib
 <src/*.ml{,i,y}>: pkg_threads
 # Library crab
 "src/crab.cmxs": use_crab

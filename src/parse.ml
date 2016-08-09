@@ -1,18 +1,6 @@
 open Lexing
-
-exception ParsingError of string
-
-  let get_line lexbuf = 
-    let pos = lexeme_start_p lexbuf in
-        pos.pos_lnum
-
-  let get_start_col lexbuf =
-    let pos = lexeme_start_p lexbuf in
-        pos.pos_cnum - pos.pos_bol + 1
-
-  let get_end_col lexbuf = 
-    let pos = lexeme_end_p lexbuf in
-        pos.pos_cnum - pos.pos_bol + 1
+open Lexer
+open Error
 
 module I = Parser.MenhirInterpreter
 

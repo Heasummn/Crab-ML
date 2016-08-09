@@ -19,7 +19,7 @@ if [ "$1" == "build" ]; then
 		echo 'mark_tag_used("tests")' >> myocamlbuild.ml
 	fi
 
-	./configure
+	./configure || exit
 
 	# Finally, build
 	make build || exit

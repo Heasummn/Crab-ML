@@ -27,6 +27,6 @@ let main () =
         let parsed = Parse.process_chan input in
         List.iter ~f:(dump_val) (codegen_ast parsed)
     with 
-        | Lexer.SyntaxError (msg) -> Printf.fprintf stderr "Syntax Error: %s\n" msg
-        | Parse.ParsingError(msg) -> Printf.fprintf stderr "Parsing Error: %s\n" msg
+        | Error.SyntaxError (msg) -> Printf.fprintf stderr "Syntax Error: %s\n" msg
+        | Error.ParsingError(msg) -> Printf.fprintf stderr "Parsing Error: %s\n" msg
 let _ = main ()
