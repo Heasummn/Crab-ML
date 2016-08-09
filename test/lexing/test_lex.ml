@@ -2,11 +2,19 @@ open OUnit2
 open Lexer
 open Lexing
 open Parser
+
 let extract token = match token with
-	| Parser.INT(x) 	-> string_of_int x
-	| Parser.FLOAT(x)	-> string_of_float x
-	| SEMI				-> ";"
-	| EOF 				-> "EOF"
+	| INT(x) 	-> string_of_int x
+	| FLOAT(x)	-> string_of_float x
+
+	| PLUS		-> "+"
+	| MINUS	 	-> "-"
+	| MULT	 	-> "*"
+	| DIV	 	-> "/"
+	| LPAREN 	-> "("
+	| RPAREN	-> ")"		
+	| SEMI		-> ";"
+	| EOF 		-> "EOF"
 
 let lex lexbuf = 
 	let rec recurse lexbuf tokens =
@@ -19,17 +27,20 @@ let lex lexbuf =
 	let rev_lex = recurse lexbuf [] in
 	List.rev rev_lex
 
-let test_int_lex test_ctxt = 
-	let lexbuf = Lexing.from_string "-42" in
-	let lexed = lex lexbuf in
+let assert_list ?msg:(msg="Value") xs ys = 
 	let printer x = "[" ^ String.concat ", " x ^ "]" in
-	assert_equal ~msg:"Integer Value" ~printer ["-42"; "EOF"] lexed
+	assert_equal ~msg ~printer xs ys
+
+let lex_from_string str = let lexbuf = Lexing.from_string str in
+	lex lexbuf
+
+let test_int_lex test_ctxt = 
+	let lexed = lex_from_string "-42" in
+	assert_list ~msg:"Integer Value" ["-"; "42"; "EOF"] lexed
 
 let test_program_lex test_ctxt = 
-	let lexbuf = Lexing.from_string "004; -36; 		-087;" in
-	let lexed = lex lexbuf in
-	let printer x = "[" ^ String.concat ", " x ^ "]" in
-	assert_equal ~msg:"Lex whole Program" ~printer ["4"; ";"; "-36"; ";"; "-87"; ";"; "EOF"] lexed
+	let lexed = lex_from_string "004; -36; 		-087;" in
+	assert_list ~msg:"Lex whole program" ["4"; ";"; "-"; "36"; ";"; "-"; "87"; ";"; "EOF"] lexed
 
 let suite = 
 	"Lexing">:::
