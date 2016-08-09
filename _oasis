@@ -7,20 +7,19 @@ License:     MIT
 Plugins:     META (0.4), DevFiles (0.4)
 BuildTools:  ocamlbuild, menhir
 AlphaFeatures: ocamlbuild_more_args
-XOCamlbuildExtraArgs: '-use-menhir -menhir "menhir --table" -package menhirLib'
+XOCamlbuildExtraArgs: '-use-menhir -menhir "menhir --table"'
 
 Executable "crab"
   Path:             src
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     llvm, core, threads
-  NativeOpt:        -w +A-4-6-9-41-42-44 -warn-error +1..49-33 -safe-string -strict-sequence
+  BuildDepends:     llvm, menhirLib
 
 
 Library crab
   Path:             src
-  Modules:          Crab, Ast, Codegen
+  Modules:          Crab, Ast, Codegen, Error
 
 Executable test_lexing
   Path:				      test/lexing
@@ -29,7 +28,6 @@ Executable test_lexing
   CompiledObject:	  best
   MainIs:			      test_lex.ml
   BuildDepends: 	  oUnit, crab
-  NativeOpt:        -w @a -4 -41
 
 Test "lexing"
   Command: 			    $test_lexing

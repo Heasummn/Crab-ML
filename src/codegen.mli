@@ -1,6 +1,3 @@
-open Llvm
-open Ast
-
 val context         : Llvm.llcontext
 val glob_module     : Llvm.llmodule
 val builder         : Llvm.llbuilder
