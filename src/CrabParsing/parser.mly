@@ -4,15 +4,18 @@
 
 %token <int>    INT
 %token <float>  FLOAT
+%token <string> ALPHANUM
+
+/* Keywords */
+%token DEF
 
 /* Operators */
 %token LPAREN RPAREN
 %token PLUS MINUS MULT DIV
+%token EQUAL
+%token SEMI
 
 %token EOF
-
-/* Non keywords */
-%token SEMI
 
 /* Associativity */
 %left PLUS MINUS
@@ -26,8 +29,31 @@
  *      exprs EOF
  */
 program:
-    | stmts = exprs EOF         
+    | stmts = funcs EOF         
             { stmts }
+    ;
+
+/* Funcs ->
+ * EMPTY | func funcs
+ */
+funcs:
+    |       { [] }
+    | f = func; fs = funcs;
+            { f::fs }
+    ;
+
+/* Func ->
+ * DEF type name = exprs
+ */
+func:
+    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = exprs;
+            { let typ = match ty with
+                | "int"     -> Tint
+                | "float"   -> Tfloat
+                | _         -> raise(Error.TypeError ("Unknown type"))
+            in
+                Func(typ, name, body);
+            }
     ;
 
 /* Exprs ->

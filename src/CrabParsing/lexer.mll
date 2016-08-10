@@ -8,10 +8,17 @@ let digit = ['0'-'9']
 let int = digit+
 let e = ['e' 'E']
 let float = int '.' int e? '-'? int?
+let letter = ['a'-'z''A'-'Z']
+let alpha = letter+ (letter '_')*
+let alphanum = alpha+digit*
 
 (* Whitespace *)
 let whitespace = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
+
+(* Keywords TODO: Replace these with Hashtbk *)
+let def = "def"
+
 
 rule read = 
     parse
@@ -29,6 +36,11 @@ rule read =
     | '('           { LPAREN }
     | ')'           { RPAREN }
     | ';'           { SEMI }
+    | '='           { EQUAL }
+
+    | def           { DEF }
+
+    | alphanum      { ALPHANUM (Lexing.lexeme lexbuf) }
 
     | "(*"          { nested_comment 1 lexbuf }
     | "//"          { comment lexbuf }

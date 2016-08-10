@@ -2,6 +2,7 @@ open Lexing
 
 exception SyntaxError of string
 exception ParsingError of string
+exception TypeError of string
 
 let get_line lexbuf = 
     let pos = lexeme_start_p lexbuf in

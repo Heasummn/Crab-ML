@@ -19,11 +19,13 @@ let rec rep_expr = function
 
 let print_ast (tree) = List.iter (fun x -> print_endline (rep_expr x)) tree
 
+let dump_funcs = List.iter dump_val
+
 let main () = 
     let input = open_in filename in
     try
         let parsed = CrabParsing.process_chan input in
-        List.iter dump_val (codegen_ast parsed)
+        List.iter (fun x -> dump_funcs x; print_endline "") (codegen_ast parsed)
     with 
         | Error.SyntaxError (msg) -> Printf.fprintf stderr "Syntax Error: %s\n" msg
         | Error.ParsingError(msg) -> Printf.fprintf stderr "Parsing Error: %s\n" msg
