@@ -8,7 +8,7 @@ let rep_literal = function
     | Float(x)      -> string_of_float x
 
 let rec rep_expr = function
-    | Lit(e1)       -> rep_literal e1
+    | Base(e1) | Lit(e1)       -> rep_literal e1
     | Add(e1, e2)   -> rep_expr e1 ^ " + " ^ rep_expr e2 
     | Sub(e1, e2)   -> rep_expr e1 ^ " - " ^ rep_expr e2
     | Mult(e1, e2)  -> rep_expr e1 ^ " * " ^ rep_expr e2
