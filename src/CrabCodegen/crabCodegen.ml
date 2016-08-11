@@ -17,7 +17,7 @@ let codegen_literal = function
     | Float x       -> const_float float_type x
 
 let rec codegen_expr = function
-    | Base e1 | Lit e1 -> codegen_literal e1
+    | Lit e1 -> codegen_literal e1
     | Paren e1      -> codegen_expr e1
     | Neg e1        -> build_fneg (codegen_expr e1) "negtmp" builder
 

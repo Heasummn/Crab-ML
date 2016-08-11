@@ -8,7 +8,7 @@ let rep_literal = function
     | Float(x)      -> string_of_float x
 
 let rec rep_expr = function
-    | Base(e1) | Lit(e1)       -> rep_literal e1
+    | Lit(e1)       -> rep_literal e1
     | Add(e1, e2)   -> rep_expr e1 ^ " + " ^ rep_expr e2 
     | Sub(e1, e2)   -> rep_expr e1 ^ " - " ^ rep_expr e2
     | Mult(e1, e2)  -> rep_expr e1 ^ " * " ^ rep_expr e2
@@ -16,8 +16,14 @@ let rec rep_expr = function
     | Neg(e1)       -> "-" ^ rep_expr e1
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
 
+let rep_type = function
+    | Tint      -> "int"
+    | Tfloat    -> "float"
 
-let print_ast (tree) = List.iter (fun x -> print_endline (rep_expr x)) tree
+let rep_func = function
+    | Func(tp, name, body)  -> "def " ^ (rep_type tp) ^ " " ^ name ^ "() = " ^ (rep_expr body) ^ ";"
+
+let print_ast = List.iter (fun x -> print_endline(rep_func x))
 
 let dump_funcs = List.iter (fun x -> dump_val x; print_endline "")
 
@@ -25,6 +31,8 @@ let main () =
     let input = open_in filename in
     try
         let parsed = CrabParsing.process_chan input in
+        print_ast parsed;
+        print_endline "";
         dump_funcs (codegen_ast parsed)
     with 
         | Error.SyntaxError (msg) -> Printf.fprintf stderr "Syntax Error: %s\n" msg

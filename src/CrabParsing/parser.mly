@@ -22,7 +22,7 @@
 %left MULT DIV
 %nonassoc UMINUS
 
-%start <'a CrabAst.top list> program
+%start <CrabAst.ast list> program
 %%
 
 /* Program ->
