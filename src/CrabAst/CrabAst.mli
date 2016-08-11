@@ -13,6 +13,13 @@ type expr =
 
 type types = Tint | Tfloat
 
-type ast = 
+type top = 
 	(* def type name exprs *)
 	| Func of types * string * expr 
+
+
+(* This definition is magical.
+ * What it allows us to do is pair any amount of information with our AST,
+ * without too much fiddling. Such as type data, or w/e else we might want.
+ *)
+type 'a ast = Ast of 'a * ('a ast) * top
