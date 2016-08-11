@@ -30,12 +30,18 @@ Library "CrabParsing"
   BuildDepends:     menhirLib, Crab.CrabAst
   BuildTools+:      menhir
 
+Library "CrabTypeCheck"
+  FindLibParent:    Crab
+  Path:             src/CrabTypeCheck
+  Modules:          CrabTypeCheck
+  BuildDepends:     Crab.CrabAst
+
 Executable "crab"
   Path:             src
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabTypeCheck
 
 Executable test_lexing
   Path:				      test/lexing

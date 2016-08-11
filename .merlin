@@ -3,10 +3,12 @@ S src/
 S src/CrabAst
 S src/CrabCodegen
 S src/CrabParsing
+S src/CrabTypeCheck
 S test/lexing
 
 B _build/src
 B _build/src/CrabAst
 B _build/src/CrabCodegen
 B _build/src/CrabParsing
+B _build/src/CrabTypeCheck
 B _build/test/lexing

@@ -16,3 +16,9 @@ type types = Tint | Tfloat
 type ast = 
     (* def type name exprs *)
     | Func of types * string * expr
+
+val rep_literal     : literal -> string
+val rep_expr        : expr -> string
+val rep_type        : types -> string
+val rep_func        : ast -> string
+val print_ast       : ast list -> unit

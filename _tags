@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 9b602c1094164da00ad4c5e7346df57c)
+# DO NOT EDIT (digest: a3d4c6943b84c72e193321508903e25b)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -26,17 +26,22 @@ true: annot, bin_annot
 "src/CrabParsing/CrabParsing.cmxs": use_CrabParsing
 <src/CrabParsing/*.ml{,i,y}>: pkg_menhirLib
 <src/CrabParsing/*.ml{,i,y}>: use_CrabAst
+# Library CrabTypeCheck
+"src/CrabTypeCheck/CrabTypeCheck.cmxs": use_CrabTypeCheck
+<src/CrabTypeCheck/*.ml{,i,y}>: use_CrabAst
 # Executable crab
 <src/crab.{native,byte}>: pkg_llvm
 <src/crab.{native,byte}>: pkg_menhirLib
 <src/crab.{native,byte}>: use_CrabAst
 <src/crab.{native,byte}>: use_CrabCodegen
 <src/crab.{native,byte}>: use_CrabParsing
+<src/crab.{native,byte}>: use_CrabTypeCheck
 <src/*.ml{,i,y}>: pkg_llvm
 <src/*.ml{,i,y}>: pkg_menhirLib
 <src/*.ml{,i,y}>: use_CrabAst
 <src/*.ml{,i,y}>: use_CrabCodegen
 <src/*.ml{,i,y}>: use_CrabParsing
+<src/*.ml{,i,y}>: use_CrabTypeCheck
 # Executable test_lexing
 <test/lexing/test_lex.{native,byte}>: pkg_batteries
 <test/lexing/test_lex.{native,byte}>: pkg_menhirLib
