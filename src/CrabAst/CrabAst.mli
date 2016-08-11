@@ -15,4 +15,4 @@ type types = Tint | Tfloat
 
 type ast = 
 	(* def type name exprs *)
-	| Func of types * string * expr list 
+	| Func of types * string * expr 

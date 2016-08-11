@@ -46,7 +46,7 @@ funcs:
  * DEF type name = exprs
  */
 func:
-    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = exprs;
+    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = expr;
             { let typ = match ty with
                 | "int"     -> Tint
                 | "float"   -> Tfloat
@@ -56,15 +56,6 @@ func:
             }
     ;
 
-/* Exprs ->
- *      EMPTY | expr; exprs
- */
-exprs:
-    |                                   { [] }
-    | stmt = expr; SEMI;
-        stmts = exprs   
-            { stmt :: stmts } 
-    ;
 
 /* Expr ->
  *      literal | (expr) 

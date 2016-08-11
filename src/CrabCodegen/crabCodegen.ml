@@ -35,7 +35,7 @@ let rec codegen_expr = function
             build_fdiv e1_val e2_val "divtmp" builder
 
 let codegen_func = function 
-    | Func(_, _, body)  -> List.map codegen_expr body
+    | Func(_, _, body)  -> codegen_expr body
 
 let codegen_ast tree =
     List.map codegen_func tree
