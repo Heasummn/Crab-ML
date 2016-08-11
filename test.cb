@@ -2,4 +2,4 @@ def int foo =
     4 + 6;
 
 def float bar =
-    4 + 5;
+    4 + 5

@@ -46,7 +46,7 @@ funcs:
  * DEF type name = exprs
  */
 func:
-    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = expr; SEMI;
+    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = expr; option(SEMI);
             { let typ = match ty with
                 | "int"     -> Tint
                 | "float"   -> Tfloat
