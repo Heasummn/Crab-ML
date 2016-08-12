@@ -28,7 +28,7 @@ Library "CrabCodegen"
 Library "CrabCommon"
   FindLibParent:    Crab
   Path:             src/CrabCommon
-  Modules:          Error
+  Modules:          Error, Location, Types
 
 Library "CrabParsing"
   FindLibParent:    Crab
@@ -37,10 +37,10 @@ Library "CrabParsing"
   BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon
   BuildTools+:      menhir
 
-Library "CrabTypeCheck"
+Library "CrabSemantic"
   FindLibParent:    Crab
-  Path:             src/CrabTypeCheck
-  Modules:          CrabTypeCheck
+  Path:             src/CrabSemantic
+  Modules:          CrabSemantic, AnalyzeTp
   BuildDepends:     Crab.CrabAst, Crab.CrabCommon
 
 Executable "crab"
@@ -48,7 +48,7 @@ Executable "crab"
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon, Crab.CrabTypeCheck
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon, Crab.CrabSemantic
 
 Executable test_lexing
   Path:             test/lexing

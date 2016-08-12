@@ -1,9 +1,14 @@
 %{
     open CrabAst
+    open Types
 
     let make_loc start end_pos = Location.make start end_pos
     (* Return the appropiate type with it's annotation *)
-    let make_node node start end_pos = {data = node; position = (make_loc start end_pos)} 
+    let make_node node start end_pos = {
+        data = node; 
+        position = (make_loc start end_pos); 
+        tp = None;
+    } 
 %}
 
 %token <int>    INT

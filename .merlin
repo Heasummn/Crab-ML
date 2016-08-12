@@ -4,6 +4,7 @@ S src/CrabAst
 S src/CrabCodegen
 S src/CrabCommon
 S src/CrabParsing
+S src/CrabSemantic
 S src/CrabTypeCheck
 S test/lexing
 
@@ -12,5 +13,6 @@ B _build/src/CrabAst
 B _build/src/CrabCodegen
 B _build/src/CrabCommon
 B _build/src/CrabParsing
+B _build/src/CrabSemantic
 B _build/src/CrabTypeCheck
 B _build/test/lexing
