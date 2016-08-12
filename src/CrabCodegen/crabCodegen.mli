@@ -9,5 +9,5 @@ val dump_mod        : Llvm.llmodule -> unit
 
 val codegen_literal : literal -> Llvm.llvalue
 val codegen_expr    : expr -> Llvm.llvalue
-val codegen_func    : ast -> Llvm.llvalue
-val codegen_ast     : ast list -> Llvm.llvalue list
+val codegen_func    : toplevel -> Llvm.llvalue
+val codegen_ast     : toplevel list -> Llvm.llvalue list

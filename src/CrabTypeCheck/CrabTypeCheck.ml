@@ -1,7 +1,7 @@
 open CrabAst
 open Error
 
-let type_of_lit = function
+let type_of_lit lit = match lit.data with 
 	| Integer _ 	-> Tint
 	| Float _		-> Tfloat
 
@@ -27,7 +27,7 @@ and type_of_expr e =
 		if (is_num e1 && is_num e2) then bind e1 e2 else assert false
 	in
 
-	match e with 
+	match e.data with 
 	| Lit e1		-> type_of_lit e1
 	| Paren e1		-> type_of_expr e1
 	| Neg e1		-> if is_num e1 then type_of_expr e1 else assert false
@@ -36,7 +36,7 @@ and type_of_expr e =
 	| Sub (e1, e2)	-> type_op e1 e2
 	| Div (e1, e2)	-> type_op e1 e2
 
-let type_func = function
+let type_func func = match func.data with
 	| Func(tp, _, expr)	-> check_exn tp expr
 
 let typecheck tree = List.iter type_func tree

@@ -17,6 +17,7 @@ Library "CrabAst"
   FindLibParent:    Crab
   Path:             src/CrabAst
   Modules:          CrabAst
+  BuildDepends:     Crab.CrabCommon
 
 Library "CrabCodegen"
   FindLibParent:    Crab

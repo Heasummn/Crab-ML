@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 83d346a2958a19c873a18f095abc6b80)
+# DO NOT EDIT (digest: 65cc2d635d2fadeca78f7cec68b95b03)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,14 +16,16 @@ true: annot, bin_annot
 "_darcs": not_hygienic
 # Library Crab
 "src/Crab.cmxs": use_Crab
+# Library CrabCommon
+"src/CrabCommon/CrabCommon.cmxs": use_CrabCommon
 # Library CrabAst
 "src/CrabAst/CrabAst.cmxs": use_CrabAst
+<src/CrabAst/*.ml{,i,y}>: use_CrabCommon
 # Library CrabCodegen
 "src/CrabCodegen/CrabCodegen.cmxs": use_CrabCodegen
 <src/CrabCodegen/*.ml{,i,y}>: pkg_llvm
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabAst
-# Library CrabCommon
-"src/CrabCommon/CrabCommon.cmxs": use_CrabCommon
+<src/CrabCodegen/*.ml{,i,y}>: use_CrabCommon
 # Library CrabParsing
 "src/CrabParsing/CrabParsing.cmxs": use_CrabParsing
 <src/CrabParsing/*.ml{,i,y}>: pkg_menhirLib

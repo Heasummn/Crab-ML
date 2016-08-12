@@ -1,5 +1,9 @@
 %{
     open CrabAst
+
+    let make_loc start end_pos = Location.make start end_pos
+    (* Return the appropiate type with it's annotation *)
+    let make_node node start end_pos = {data = node; position = (make_loc start end_pos)} 
 %}
 
 %token <int>    INT
@@ -22,7 +26,7 @@
 %left MULT DIV
 %nonassoc UMINUS
 
-%start <CrabAst.ast list> program
+%start <CrabAst.toplevel list> program
 %%
 
 /* Program ->
@@ -52,7 +56,7 @@ func:
                 | "float"   -> Tfloat
                 | _         -> raise(Error.TypeError ("Unknown type"))
             in
-                Func(typ, name, body);
+                make_node (Func(typ, name, body)) $startpos $endpos
             }
     ;
 
@@ -65,19 +69,19 @@ func:
  */
 expr:
     | e1 = literal
-        { Lit e1 }
+        { make_node (Lit e1) $startpos $endpos }
     | LPAREN e1 = expr RPAREN
-        { Paren e1 }
+        { make_node (Paren e1) $startpos $endpos }
     | MINUS e1 = expr   %prec UMINUS
-        { Neg e1 }
+        { make_node (Neg e1) $startpos $endpos }
     | e1 = expr MULT e2 = expr
-        { Mult (e1, e2) }
+        { make_node (Mult (e1, e2)) $startpos $endpos }
     | e1 = expr DIV e2 = expr
-        { Div (e1, e2) }
+        { make_node (Div (e1, e2)) $startpos $endpos }
     | e1 = expr PLUS e2 = expr
-        { Add (e1, e2) }
+        { make_node (Add (e1, e2)) $startpos $endpos }
     | e1 = expr MINUS e2 = expr
-        { Sub (e1, e2) }
+        { make_node (Sub (e1, e2)) $startpos $endpos }
     ;
 
 /* Literal ->
@@ -85,8 +89,8 @@ expr:
  */
 literal:
     | i = INT                           
-            { Integer i }
+            { make_node (Integer i) $startpos $endpos}
     | f = FLOAT                         
-            { Float f }
+            { make_node (Float f) $startpos $endpos}
     ;
 
