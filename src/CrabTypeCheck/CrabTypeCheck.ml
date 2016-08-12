@@ -1,6 +1,5 @@
 open CrabAst
-
-exception TypeError of string
+open Error
 
 let type_of_lit = function
 	| Integer _ 	-> Tint
@@ -9,7 +8,7 @@ let type_of_lit = function
 let rec check_exn ty e = let ty' = type_of_expr e in 
 	if ty' <> ty then
 		raise(TypeError( rep_expr e ^
-	" has type " ^ rep_type ty' ^ ", but is used as if it has type " ^
+	" has type " ^ rep_type ty' ^ ", but is assumed to have type " ^
 	rep_type ty))
 
 and check ty e = let ty' = type_of_expr e in 

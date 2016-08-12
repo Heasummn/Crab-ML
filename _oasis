@@ -16,6 +16,7 @@ Library "Crab"
 Library "CrabAst"
   FindLibParent:    Crab
   Path:             src/CrabAst
+  Modules:          CrabAst
 
 Library "CrabCodegen"
   FindLibParent:    Crab
@@ -23,35 +24,40 @@ Library "CrabCodegen"
   Modules:          CrabCodegen
   BuildDepends:     Crab.CrabAst, llvm
 
+Library "CrabCommon"
+  FindLibParent:    Crab
+  Path:             src/CrabCommon
+  Modules:          Error
+
 Library "CrabParsing"
   FindLibParent:    Crab
   Path:             src/CrabParsing
-  Modules:          Error, Lexer, Parser
-  BuildDepends:     menhirLib, Crab.CrabAst
+  Modules:          Lexer, Parser
+  BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon
   BuildTools+:      menhir
 
 Library "CrabTypeCheck"
   FindLibParent:    Crab
   Path:             src/CrabTypeCheck
   Modules:          CrabTypeCheck
-  BuildDepends:     Crab.CrabAst
+  BuildDepends:     Crab.CrabAst, Crab.CrabCommon
 
 Executable "crab"
   Path:             src
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabTypeCheck
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon, Crab.CrabTypeCheck
 
 Executable test_lexing
-  Path:				      test/lexing
-  Build$: 		      flag(tests)
-  Install: 			    false
-  CompiledObject:	  best
-  MainIs:			      test_lex.ml
-  BuildDepends: 	  oUnit, str, batteries, Crab.CrabParsing
+  Path:             test/lexing
+  Build$:           flag(tests)
+  Install:          false
+  CompiledObject:   best
+  MainIs:           test_lex.ml
+  BuildDepends:     oUnit, str, batteries, Crab.CrabParsing
 
 Test "lexing"
-  Command: 			    $test_lexing
-  TestTools:		    test_lexing
+  Command:          $test_lexing
+  TestTools:        test_lexing
   Run$: flag(tests)

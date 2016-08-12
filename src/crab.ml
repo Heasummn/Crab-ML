@@ -17,5 +17,5 @@ let main () =
     with 
         | Error.SyntaxError (msg)   -> Printf.fprintf stderr "Syntax Error: %s\n" msg
         | Error.ParsingError(msg)   -> Printf.fprintf stderr "Parsing Error: %s\n" msg
-        | TypeError(msg)            -> Printf.fprintf stderr "Type Error: %s\n" msg
+        | Error.TypeError(msg)            -> Printf.fprintf stderr "Type Error: %s\n" msg
 let _ = main ()

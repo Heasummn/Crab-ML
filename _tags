@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: a3d4c6943b84c72e193321508903e25b)
+# DO NOT EDIT (digest: 83d346a2958a19c873a18f095abc6b80)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -22,24 +22,30 @@ true: annot, bin_annot
 "src/CrabCodegen/CrabCodegen.cmxs": use_CrabCodegen
 <src/CrabCodegen/*.ml{,i,y}>: pkg_llvm
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabAst
+# Library CrabCommon
+"src/CrabCommon/CrabCommon.cmxs": use_CrabCommon
 # Library CrabParsing
 "src/CrabParsing/CrabParsing.cmxs": use_CrabParsing
 <src/CrabParsing/*.ml{,i,y}>: pkg_menhirLib
 <src/CrabParsing/*.ml{,i,y}>: use_CrabAst
+<src/CrabParsing/*.ml{,i,y}>: use_CrabCommon
 # Library CrabTypeCheck
 "src/CrabTypeCheck/CrabTypeCheck.cmxs": use_CrabTypeCheck
 <src/CrabTypeCheck/*.ml{,i,y}>: use_CrabAst
+<src/CrabTypeCheck/*.ml{,i,y}>: use_CrabCommon
 # Executable crab
 <src/crab.{native,byte}>: pkg_llvm
 <src/crab.{native,byte}>: pkg_menhirLib
 <src/crab.{native,byte}>: use_CrabAst
 <src/crab.{native,byte}>: use_CrabCodegen
+<src/crab.{native,byte}>: use_CrabCommon
 <src/crab.{native,byte}>: use_CrabParsing
 <src/crab.{native,byte}>: use_CrabTypeCheck
 <src/*.ml{,i,y}>: pkg_llvm
 <src/*.ml{,i,y}>: pkg_menhirLib
 <src/*.ml{,i,y}>: use_CrabAst
 <src/*.ml{,i,y}>: use_CrabCodegen
+<src/*.ml{,i,y}>: use_CrabCommon
 <src/*.ml{,i,y}>: use_CrabParsing
 <src/*.ml{,i,y}>: use_CrabTypeCheck
 # Executable test_lexing
@@ -48,12 +54,14 @@ true: annot, bin_annot
 <test/lexing/test_lex.{native,byte}>: pkg_oUnit
 <test/lexing/test_lex.{native,byte}>: pkg_str
 <test/lexing/test_lex.{native,byte}>: use_CrabAst
+<test/lexing/test_lex.{native,byte}>: use_CrabCommon
 <test/lexing/test_lex.{native,byte}>: use_CrabParsing
 <test/lexing/*.ml{,i,y}>: pkg_batteries
 <test/lexing/*.ml{,i,y}>: pkg_menhirLib
 <test/lexing/*.ml{,i,y}>: pkg_oUnit
 <test/lexing/*.ml{,i,y}>: pkg_str
 <test/lexing/*.ml{,i,y}>: use_CrabAst
+<test/lexing/*.ml{,i,y}>: use_CrabCommon
 <test/lexing/*.ml{,i,y}>: use_CrabParsing
 # OASIS_STOP
 
