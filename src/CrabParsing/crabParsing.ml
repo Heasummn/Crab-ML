@@ -1,16 +1,17 @@
 open Lexing
 open Error
+open Location
 
 module I = Parser.MenhirInterpreter
 
-let fail lexbuf _ = 
-     raise (ParsingError (
-            "Unexpected identifier(s) near: " ^ (lexeme lexbuf) ^ 
-            "\n\tAt line: " ^ (string_of_int (get_line lexbuf)) ^
-            ", Columns: " ^ string_of_int (get_start_col lexbuf) ^
-            "-" ^ string_of_int(get_end_col lexbuf) ^ 
-            (if ((get_start_col lexbuf) = 1) then ".\n\tHint: Are you missing a semi colon?"
-                else ".")))
+
+let fail lexbuf _  = 
+    let loc = from_lex lexbuf in
+        raise (ParsingError (
+            " identifier(s) near: " ^ (lexeme lexbuf) ^ 
+            "\n\tAt line: " ^ string_of_int (loc.s_line) ^
+            ", Columns: " ^ string_of_int (loc.s_column) ^
+            "-" ^ string_of_int(loc.e_column)))
 
 let loop lexbuf result =
     let supplier = I.lexer_lexbuf_to_supplier Lexer.read lexbuf in

@@ -1,8 +1,7 @@
 (* Inspired by the location system from Eff *)
 
-type t = Known of known
-
-and known = {
+type t = 
+{
 	filename: string;
 	s_line: int;
 	s_column: int;
@@ -19,4 +18,11 @@ let break pos =
 let make start_pos end_pos = 
 	let start_fname, s_line, s_column = break start_pos
 	and _, e_line, e_column = break end_pos in
-	Known {filename = start_fname; s_line; s_column; e_line; e_column }
+	{filename = start_fname; s_line; s_column; e_line; e_column }
+
+let from_lex lexbuf = make (Lexing.lexeme_start_p lexbuf) (Lexing.lexeme_end_p lexbuf)
+
+let rep_position ?filename:(filename=false) pos = 
+	(if filename then pos.filename ^ ": " else "") ^ "(" ^
+		string_of_int pos.s_line ^ ", " ^ string_of_int pos.s_column ^ ") - (" ^
+		string_of_int pos.e_line ^ ", " ^ string_of_int pos.e_column ^ ")"

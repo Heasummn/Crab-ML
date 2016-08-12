@@ -33,7 +33,7 @@ Library "CrabCommon"
 Library "CrabParsing"
   FindLibParent:    Crab
   Path:             src/CrabParsing
-  Modules:          Lexer, Parser
+  Modules:          CrabParsing, Lexer, Parser
   BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon
   BuildTools+:      menhir
 
