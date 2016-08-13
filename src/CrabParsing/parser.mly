@@ -7,7 +7,7 @@
     let make_node node start end_pos = {
         data = node; 
         position = (make_loc start end_pos); 
-        tp = None;
+        tp = Types.Tempty;
     } 
 %}
 

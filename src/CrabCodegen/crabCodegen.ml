@@ -12,6 +12,7 @@ let dump_mod = dump_module
 (* TODO: Replace this with a Hash Table *)
 let int_type = integer_type context 64
 let float_type = double_type context
+let void = void_type context
 
 let codegen_literal literal = match literal.data with 
     | Integer x     -> const_int int_type x
@@ -36,18 +37,19 @@ let rec codegen_expr expr = match expr.data with
             build_fdiv e1_val e2_val "divtmp" builder
 
 let type_to_llvm = function
+    | Tempty -> void
     | Tint   -> int_type
     | Tfloat -> float_type
 
 (* Later, use the type checked type of the function instead of given *)
-let codegen_proto = function
-    | Func(tp, name, _)  -> let void = Array.make 0 int_type in
-        let ft = function_type (type_to_llvm tp) void in
+let codegen_proto func = match func.data with
+    | Func(_, name, _)  -> let void = Array.make 0 void in
+        let ft = function_type (type_to_llvm func.tp) void in
         declare_function name ft glob_module
 
 let codegen_func func = match func.data with 
     | Func(_, _, body)  ->
-        let the_function = codegen_proto func.data in
+        let the_function = codegen_proto func in
         let bb = append_block context "entry" the_function in
         position_at_end bb builder;
         try

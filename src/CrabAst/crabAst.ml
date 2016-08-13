@@ -1,6 +1,6 @@
 (* If we want to add data to an AST node, we add it here *)
 
-type 'a annotation = { data: 'a; position: Location.t; tp: Types.tp option }
+type 'a annotation = { data: 'a; position: Location.t; tp: Types.tp }
 
 type literal = simple_literal annotation
 and simple_literal = 
