@@ -1,5 +1,6 @@
 open Llvm
 open CrabAst
+open Types
 
 let context = global_context ()
 let glob_module = create_module context "Crab"
@@ -34,8 +35,30 @@ let rec codegen_expr expr = match expr.data with
         let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
             build_fdiv e1_val e2_val "divtmp" builder
 
+let type_to_llvm = function
+    | Tint   -> int_type
+    | Tfloat -> float_type
+
+(* Later, use the type checked type of the function instead of given *)
+let codegen_proto = function
+    | Func(tp, name, _)  -> let void = Array.make 0 int_type in
+        let ft = function_type (type_to_llvm tp) void in
+        declare_function name ft glob_module
+
 let codegen_func func = match func.data with 
-    | Func(_, _, body)  -> codegen_expr body
+    | Func(_, _, body)  ->
+        let the_function = codegen_proto func.data in
+        let bb = append_block context "entry" the_function in
+        position_at_end bb builder;
+        try
+            let ret_val =   codegen_expr body in
+            ignore(build_ret ret_val builder);
+            Llvm_analysis.assert_valid_function the_function;
+
+            the_function
+        with e ->
+            delete_function the_function;
+            raise e
 
 let codegen_ast tree =
     List.map codegen_func tree

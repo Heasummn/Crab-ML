@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 099324f7e0338f73b337e5f45b4a40c1)
+# DO NOT EDIT (digest: fa1bc5b40c51553e76552219be121ca2)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -24,6 +24,7 @@ true: annot, bin_annot
 # Library CrabCodegen
 "src/CrabCodegen/CrabCodegen.cmxs": use_CrabCodegen
 <src/CrabCodegen/*.ml{,i,y}>: pkg_llvm
+<src/CrabCodegen/*.ml{,i,y}>: pkg_llvm.analysis
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabAst
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabCommon
 # Library CrabParsing
@@ -37,6 +38,7 @@ true: annot, bin_annot
 <src/CrabSemantic/*.ml{,i,y}>: use_CrabCommon
 # Executable crab
 <src/crab.{native,byte}>: pkg_llvm
+<src/crab.{native,byte}>: pkg_llvm.analysis
 <src/crab.{native,byte}>: pkg_menhirLib
 <src/crab.{native,byte}>: use_CrabAst
 <src/crab.{native,byte}>: use_CrabCodegen
@@ -44,6 +46,7 @@ true: annot, bin_annot
 <src/crab.{native,byte}>: use_CrabParsing
 <src/crab.{native,byte}>: use_CrabSemantic
 <src/*.ml{,i,y}>: pkg_llvm
+<src/*.ml{,i,y}>: pkg_llvm.analysis
 <src/*.ml{,i,y}>: pkg_menhirLib
 <src/*.ml{,i,y}>: use_CrabAst
 <src/*.ml{,i,y}>: use_CrabCodegen

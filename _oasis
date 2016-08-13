@@ -23,7 +23,7 @@ Library "CrabCodegen"
   FindLibParent:    Crab
   Path:             src/CrabCodegen
   Modules:          CrabCodegen
-  BuildDepends:     Crab.CrabAst, llvm
+  BuildDepends:     Crab.CrabAst, llvm, llvm.analysis
 
 Library "CrabCommon"
   FindLibParent:    Crab
