@@ -1,5 +1,5 @@
-def int foo =
-	4 + 6
+def float foo =
+	4.0
 
-def int bar =
-	-(4 + 3) * 4;
+def float bar =
+	-(4.0 + 3) * 4;
