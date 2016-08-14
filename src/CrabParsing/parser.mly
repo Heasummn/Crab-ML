@@ -22,7 +22,7 @@
 %token LPAREN RPAREN
 %token PLUS MINUS MULT DIV
 %token EQUAL
-%token SEMI
+%token SEMI COLON
 
 %token EOF
 
@@ -55,7 +55,8 @@ funcs:
  * DEF type name = exprs
  */
 func:
-    | DEF; ty = ALPHANUM; name = ALPHANUM; EQUAL; body = expr; option(SEMI);
+    | DEF; name = ALPHANUM; LPAREN RPAREN; COLON; ty = ALPHANUM;
+        EQUAL; body = expr; option(SEMI);
             { let typ = match ty with
                 | "int"     -> Tint
                 | "float"   -> Tfloat

@@ -1,5 +1,5 @@
-def float foo =
+def foo(): float =
 	4.0
 
-def float bar =
+def bar(): float =
 	-(4.0 + 3) * 4;

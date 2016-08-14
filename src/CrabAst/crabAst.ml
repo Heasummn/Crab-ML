@@ -36,6 +36,6 @@ let rec rep_expr expr = match expr.data with
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
 
 let rep_func func = match func.data with 
-    | Func(tp, name, body)  -> "def " ^ (Types.rep_type tp) ^ " " ^ name ^ "() = " ^ (rep_expr body) ^ ";"
+    | Func(tp, name, body)  -> "def "  ^ name ^ "(): " ^ (Types.rep_type tp) ^ " = " ^ (rep_expr body) ^ ";"
 
 let print_ast = List.iter (fun x -> print_endline(rep_func x))

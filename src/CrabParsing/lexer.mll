@@ -37,6 +37,7 @@ rule read =
     | ')'           { RPAREN }
     | ';'           { SEMI }
     | '='           { EQUAL }
+    | ':'           { COLON }
 
     | def           { DEF }
 

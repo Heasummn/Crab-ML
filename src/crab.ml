@@ -4,14 +4,13 @@ open CrabSemantic
 
 let filename = Sys.argv.(1)
 
-let dump_funcs = List.iter (fun x -> dump_val x; print_endline "")
+let dump_funcs = List.iter (fun x -> dump_val x)
 
 let main () = 
     let input = open_in filename in
     try
         let parsed = CrabParsing.process_chan input in
         print_ast parsed;
-        print_endline "";
         let typed = annotateAST parsed in
         dump_funcs (codegen_ast typed)
     with 
