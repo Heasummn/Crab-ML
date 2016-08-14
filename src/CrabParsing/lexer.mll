@@ -16,7 +16,7 @@ let alphanum = alpha+digit*
 let whitespace = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
-(* Keywords TODO: Replace these with Hashtbk *)
+(* Keywords TODO: Replace these with Hashtbl *)
 let def = "def"
 
 
@@ -38,6 +38,7 @@ rule read =
     | ';'           { SEMI }
     | '='           { EQUAL }
     | ':'           { COLON }
+    | ','           { COMMA }
 
     | def           { DEF }
 

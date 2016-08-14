@@ -37,9 +37,9 @@ let rec codegen_expr expr = match expr.data with
             build_fdiv e1_val e2_val "divtmp" builder
 
 let type_to_llvm = function
-    | Tempty -> void
-    | Tint   -> int_type
-    | Tfloat -> float_type
+    | TEmpty -> void
+    | TInt   -> int_type
+    | TFloat -> float_type
 
 (* Later, use the type checked type of the function instead of given *)
 let codegen_proto func = match func.data with

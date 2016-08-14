@@ -9,14 +9,14 @@ let check_func func args correct otherwise =
 let check t1 t2 err = if (t1 == t2) then () else (raise(err))
 
 (* The expression to check, and it's type. Expression given for nicer errors *)
-let check_int e1 t1 = check_func (fun (x) -> x == Tint || x == Tfloat) t1 () (SyntaxError(
+let check_int e1 t1 = check_func (fun (x) -> x == TInt || x == TFloat) t1 () (SyntaxError(
     "In expression " ^ rep_expr e1 ^ ", expected numeric type, but instead got " ^ 
     rep_type t1))
 
 let annotate_lit lit =
     let inferred =  match lit.data with
-        | Integer _         -> Tint
-        | Float _           -> Tfloat
+        | Integer _         -> TInt        
+        | Float _           -> TFloat
     in
     { lit with tp = inferred }
 
@@ -50,10 +50,9 @@ and a_unary_op expr = match expr with
 
 and a_binary_op expr = 
     let tightest_bind t1 t2 = match t1, t2 with 
-        | (Tfloat, _)   -> Tfloat
-        | (_, Tfloat)   -> Tfloat
-        | (Tint, _)     -> Tint
-        | _             -> assert false
+        | (TFloat, _)   -> TFloat
+        | (_, TFloat)   -> TFloat
+        | (TInt, _)     -> TInt        | _             -> assert false
     in
 
     match expr with 

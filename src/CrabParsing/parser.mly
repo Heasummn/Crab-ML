@@ -3,11 +3,12 @@
     open Types
 
     let make_loc start end_pos = Location.make start end_pos
+
     (* Return the appropiate type with it's annotation *)
     let make_node node start end_pos = {
         data = node; 
         position = (make_loc start end_pos); 
-        tp = Types.Tempty;
+        tp = Types.TEmpty
     } 
 %}
 
@@ -22,7 +23,7 @@
 %token LPAREN RPAREN
 %token PLUS MINUS MULT DIV
 %token EQUAL
-%token SEMI COLON
+%token SEMI COLON COMMA
 
 %token EOF
 
@@ -43,7 +44,7 @@ program:
     ;
 
 /* Funcs ->
- * EMPTY | func funcs
+ *      EMPTY | func funcs
  */
 funcs:
     |       { [] }
@@ -52,21 +53,38 @@ funcs:
     ;
 
 /* Func ->
- * DEF type name = exprs
+ *      DEF name (args): type = exprs ;?
  */
 func:
-    | DEF; name = ALPHANUM; LPAREN RPAREN; COLON; ty = ALPHANUM;
+    | DEF; name = ALPHANUM; arguments; COLON; ty = typ;
         EQUAL; body = expr; option(SEMI);
-            { let typ = match ty with
-                | "int"     -> Tint
-                | "float"   -> Tfloat
-                | _         -> raise(Error.TypeError ("Unknown type"))
-            in
-                make_node (Func(typ, name, body)) $startpos $endpos
-            }
+            { make_node (Func(ty, name, body)) $startpos $endpos }
     ;
 
+/* Type ->
+ *      ALPHANUM
+ */
+typ:
+    | ty = ALPHANUM
+            {
+                find_type ty
+            }
+/* Arguments ->
+ *      ([NONE | argument :: arguments])
+ */
+arguments:
+    | LPAREN; args = separated_list(COMMA, argument); RPAREN;
+            { args }
+    ;
 
+/* Argument ->
+ *      arg: type
+ */
+
+argument:
+    | arg = ALPHANUM; COLON; ty = typ;
+            { (arg, ty) }
+    ;
 /* Expr ->
  *      literal | (expr) 
  *  |   - expr
