@@ -43,9 +43,10 @@ let type_to_llvm = function
 
 (* Later, use the type checked type of the function instead of given *)
 let codegen_proto func = match func.data with
-    | Func(def, _, _)  -> let void = Array.make 0 void in
-        let name = get_name def in
-        let ft = function_type (type_to_llvm func.tp) void in
+    | Func(def, args, _)  -> 
+        let arg_type = Array.of_list (List.map (fun x -> type_to_llvm (get_type x)) args)
+        and name = get_name def in
+        let ft = function_type (type_to_llvm func.tp) arg_type in
         declare_function name ft glob_module
 
 let codegen_func func = match func.data with 
