@@ -8,8 +8,10 @@
     let make_node node start end_pos = {
         data = node; 
         position = (make_loc start end_pos); 
-        tp = Types.TEmpty
-    } 
+        tp = TEmpty
+    }
+
+    let make_func name args ty body = Func((name, ty), args, body)
 %}
 
 %token <int>    INT
@@ -56,9 +58,9 @@ funcs:
  *      DEF name (args): type = exprs ;?
  */
 func:
-    | DEF; name = ALPHANUM; arguments; COLON; ty = typ;
+    | DEF; name = ALPHANUM; args = arguments; COLON; ty = typ;
         EQUAL; body = expr; option(SEMI);
-            { make_node (Func(ty, name, body)) $startpos $endpos }
+            { make_node (make_func name args ty body) $startpos $endpos }
     ;
 
 /* Type ->

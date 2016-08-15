@@ -18,9 +18,13 @@ and simple_expr =
     | Lit of literal
 
 type toplevel = simple_toplevel annotation
-and simple_toplevel = 
-    (* def type name expr *)
-    | Func of Types.tp * string * expr
+and simple_toplevel =
+    (* def name args type expr *)
+    | Func of typ * typ list * expr
+and typ = string * Types.tp
+
+let get_name = fst
+let get_type = snd 
 
 let rep_literal lit = match lit.data with 
     | Integer(x)    -> string_of_int x
@@ -36,6 +40,13 @@ let rec rep_expr expr = match expr.data with
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
 
 let rep_func func = match func.data with 
-    | Func(tp, name, body)  -> "def "  ^ name ^ "(): " ^ (Types.rep_type tp) ^ " = " ^ (rep_expr body) ^ ";"
+    | Func(def, args, body)  -> 
+        "def "  ^ get_name def ^ "(" ^
+        (* Ugly hack *)
+        (String.concat ", " (List.map (fun x -> get_name x ^ ": " ^
+            Types.rep_type (get_type x)) args)) ^
+
+        "): "^ (Types.rep_type (get_type def)) ^
+        " = " ^ (rep_expr body) ^ ";"
 
 let print_ast = List.iter (fun x -> print_endline(rep_func x))

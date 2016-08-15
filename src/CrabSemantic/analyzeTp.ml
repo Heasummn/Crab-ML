@@ -73,10 +73,10 @@ and a_binary_op expr =
 
 
 let annotate_func func = match func.data with
-    | Func(tp, name, body)  -> let inferred = annotate_expr body in
-
+    | Func(def, args, body)  -> let inferred = annotate_expr body in
+        let tp = get_type def and name = get_name def in
         check tp inferred.tp (SyntaxError("In function " ^ name ^ 
             ", expected type " ^ rep_type tp ^ ", but got type " ^ rep_type inferred.tp));
-        {   func with data = Func(tp, name, inferred);
+        {   func with data = Func(def, args, inferred);
             tp = (inferred).tp
         }

@@ -43,7 +43,8 @@ let type_to_llvm = function
 
 (* Later, use the type checked type of the function instead of given *)
 let codegen_proto func = match func.data with
-    | Func(_, name, _)  -> let void = Array.make 0 void in
+    | Func(def, _, _)  -> let void = Array.make 0 void in
+        let name = get_name def in
         let ft = function_type (type_to_llvm func.tp) void in
         declare_function name ft glob_module
 
