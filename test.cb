@@ -1,4 +1,4 @@
-def foo(x: float, y: int): float =
+def foo(x: float, y: float): float =
     4.0
 
 def bar(): float =

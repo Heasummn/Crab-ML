@@ -4,7 +4,7 @@
     open CrabEnv
     open Error
 
-    let types = type_env
+    let types = base_type_env
 
     let find_type typ = Table.lookup (Symbol.symbol typ) types
 
@@ -79,7 +79,7 @@ typ:
                     | Some x    -> x;
                     | None      -> (raise(ParsingError("At " ^
                     Location.rep_position (make_loc $startpos $endpos)
-                    ^ "Unknown type " ^ ty)))
+                    ^ " Unknown type " ^ ty)))
             }
 /* Arguments ->
  *      ([NONE | argument :: arguments])
