@@ -8,5 +8,3 @@ let base_types =
 
 let type_env = 
 	Table.of_list (List.map (fun (name, ty) -> Symbol.symbol name, ty) base_types)
-
-let foo = Table.lookup
