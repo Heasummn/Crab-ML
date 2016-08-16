@@ -30,11 +30,17 @@ Library "CrabCommon"
   Path:             src/CrabCommon
   Modules:          Error, Location, Types
 
+Library "CrabEnv"
+  FindLibParent:    Crab
+  Path:             src/CrabEnv
+  Modules:          Symbol, Table
+  BuildDepends:     batteries, Crab.CrabCommon
+
 Library "CrabParsing"
   FindLibParent:    Crab
   Path:             src/CrabParsing
   Modules:          CrabParsing, Lexer, Parser
-  BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon
+  BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon, Crab.CrabEnv
   BuildTools+:      menhir
 
 Library "CrabSemantic"

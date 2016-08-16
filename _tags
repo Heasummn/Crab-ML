@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: fa1bc5b40c51553e76552219be121ca2)
+# DO NOT EDIT (digest: c240811f19b918a529e925442b1d6aeb)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -27,30 +27,40 @@ true: annot, bin_annot
 <src/CrabCodegen/*.ml{,i,y}>: pkg_llvm.analysis
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabAst
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabCommon
+# Library CrabEnv
+"src/CrabEnv/CrabEnv.cmxs": use_CrabEnv
+<src/CrabEnv/*.ml{,i,y}>: pkg_batteries
+<src/CrabEnv/*.ml{,i,y}>: use_CrabCommon
 # Library CrabParsing
 "src/CrabParsing/CrabParsing.cmxs": use_CrabParsing
+<src/CrabParsing/*.ml{,i,y}>: pkg_batteries
 <src/CrabParsing/*.ml{,i,y}>: pkg_menhirLib
 <src/CrabParsing/*.ml{,i,y}>: use_CrabAst
 <src/CrabParsing/*.ml{,i,y}>: use_CrabCommon
+<src/CrabParsing/*.ml{,i,y}>: use_CrabEnv
 # Library CrabSemantic
 "src/CrabSemantic/CrabSemantic.cmxs": use_CrabSemantic
 <src/CrabSemantic/*.ml{,i,y}>: use_CrabAst
 <src/CrabSemantic/*.ml{,i,y}>: use_CrabCommon
 # Executable crab
+<src/crab.{native,byte}>: pkg_batteries
 <src/crab.{native,byte}>: pkg_llvm
 <src/crab.{native,byte}>: pkg_llvm.analysis
 <src/crab.{native,byte}>: pkg_menhirLib
 <src/crab.{native,byte}>: use_CrabAst
 <src/crab.{native,byte}>: use_CrabCodegen
 <src/crab.{native,byte}>: use_CrabCommon
+<src/crab.{native,byte}>: use_CrabEnv
 <src/crab.{native,byte}>: use_CrabParsing
 <src/crab.{native,byte}>: use_CrabSemantic
+<src/*.ml{,i,y}>: pkg_batteries
 <src/*.ml{,i,y}>: pkg_llvm
 <src/*.ml{,i,y}>: pkg_llvm.analysis
 <src/*.ml{,i,y}>: pkg_menhirLib
 <src/*.ml{,i,y}>: use_CrabAst
 <src/*.ml{,i,y}>: use_CrabCodegen
 <src/*.ml{,i,y}>: use_CrabCommon
+<src/*.ml{,i,y}>: use_CrabEnv
 <src/*.ml{,i,y}>: use_CrabParsing
 <src/*.ml{,i,y}>: use_CrabSemantic
 # Executable test_lexing
@@ -60,6 +70,7 @@ true: annot, bin_annot
 <test/lexing/test_lex.{native,byte}>: pkg_str
 <test/lexing/test_lex.{native,byte}>: use_CrabAst
 <test/lexing/test_lex.{native,byte}>: use_CrabCommon
+<test/lexing/test_lex.{native,byte}>: use_CrabEnv
 <test/lexing/test_lex.{native,byte}>: use_CrabParsing
 <test/lexing/*.ml{,i,y}>: pkg_batteries
 <test/lexing/*.ml{,i,y}>: pkg_menhirLib
@@ -67,6 +78,7 @@ true: annot, bin_annot
 <test/lexing/*.ml{,i,y}>: pkg_str
 <test/lexing/*.ml{,i,y}>: use_CrabAst
 <test/lexing/*.ml{,i,y}>: use_CrabCommon
+<test/lexing/*.ml{,i,y}>: use_CrabEnv
 <test/lexing/*.ml{,i,y}>: use_CrabParsing
 # OASIS_STOP
 
