@@ -4,10 +4,15 @@ A small programming language to experiment with compiler design in OCaml, as wel
 ## Running
 To run, you need Ocaml installed, preferrably through opam. Install Menhir, Batteries, and LLVM from opam, by running the command `opam install menhir batteries llvm`. Afterwards, the build system does the rest, it is documented below. Please report any errors with the build system.
 
+## The Build System
+The build system is a very simple Python script. It requires a working installation of Python on your machine. To use it, make sure the script is executable. This can be done by running `chmod +x launch`. Afterwards, run `./launch --help` to see the options that you have.
+
 ## What features does Crab have?
-Right now? Nothing really. Crab has an okay build system, if `run` is executable, all you need to do is run `./run build` and then `./run test.cb` to see Crab in action. Crab currently only has simple Arithmetic expressions, and compiles down to LLVM. 
+Right now? Nothing really. To see Crab in action, use the build system and build Crab. Then run `./launch test.cb`. Crab currently only has some type checking, arithmetic expressions, basic functions, and it compiles down to LLVM. 
 
 ## Future goals
 Crab has a long way to go, but I hope to add enough features to make Crab turing complete, and easy to use.
 
 The next thing to work on is more tests and documentation. A book, or something of the sort to document the iterative creation of Crab would add to the goal of being educational. 
+
+A GCC backend is also planned for the future.

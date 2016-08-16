@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import argparse
 from subprocess import call
@@ -13,7 +13,7 @@ parser.add_argument('--build', '-b',
                     action="store_true"
                     )
 
-parser.add_argument('--clean',
+parser.add_argument('--clean', '-c',
                     help="""Clean the generated files.
                     Run if a strange error occurs in building""",
                     action="store_true"
@@ -43,6 +43,8 @@ if args.clean:
 
 if args.build:
     call(['oasis', 'setup'])
+    call(['./configure'])
+    call(['clear'])
     call(["make", "build"])
     call(["mv", "crab.native", "crab"])
     print()
