@@ -30,29 +30,38 @@ parser.add_argument('filename',
 args = parser.parse_args()
 
 
+def call_exit(arr):
+    if call(arr) == 0:
+        return
+    else:
+        print("\nFailure.")
+        sys.exit(0)
+
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
 
-call(["clear"])
+call_exit(["clear"])
 
 if args.clean:
-    call(["make", "clean"])
-    call(["make", "distclean"])
+    call_exit(["make", "clean"])
+    call_exit(["make", "distclean"])
     print()
 
 if args.build:
-    call(['oasis', 'setup'])
-    call(['./configure'])
-    call(['clear'])
-    call(["make", "build"])
-    call(["mv", "crab.native", "crab"])
+    call_exit(['oasis', 'setup'])
+    call_exit(['./configure'])
+    call_exit(['clear'])
+    call_exit(["make", "build"])
+    call_exit(["mv", "crab.native", "crab"])
+    call_exit(["clear"])
     print()
 
 if args.test:
-    call(["./configure", "--enable-tests"])
-    call(["clear"])
-    call(['make', 'test'])
+    call_exit(["./configure", "--enable-tests"])
+    call_exit(["clear"])
+    call_exit(['make', 'test'])
+    call_exit(["clear"])
     print()
 
 if args.filename is not None:
@@ -61,7 +70,7 @@ if args.filename is not None:
     if os.path.isfile(fname):
         # If this doesn't exist, the user hasn't built yet
         try:
-            call(["./crab", fname])
+            call_exit(["./crab", fname])
         except FileNotFoundError:
             print("Please build before running")
             sys.exit(1)

@@ -1,4 +1,4 @@
-PKG oUnit llvm batteries
+PKG oUnit llvm llvm_executionengine batteries
 S src/
 S src/CrabAst
 S src/CrabCodegen

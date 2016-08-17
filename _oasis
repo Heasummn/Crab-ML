@@ -47,7 +47,7 @@ Library "CrabSemantic"
   FindLibParent:    Crab
   Path:             src/CrabSemantic
   Modules:          CrabSemantic, AnalyzeTp
-  BuildDepends:     Crab.CrabAst, Crab.CrabCommon
+  BuildDepends:     Crab.CrabAst, Crab.CrabCommon, Crab.CrabEnv
 
 Executable "crab"
   Path:             src

@@ -1,6 +1,8 @@
 (* If we want to add data to an AST node, we add it here *)
 
-type 'a annotation = { data: 'a; position: Location.t; tp: Types.tp }
+open Types
+
+type 'a annotation = { data: 'a; position: Location.t; tp: tp }
 
 type literal = simple_literal annotation
 and simple_literal = 
@@ -20,11 +22,7 @@ and simple_expr =
 type toplevel = simple_toplevel annotation
 and simple_toplevel =
     (* def name args type expr *)
-    | Func of typ * typ list * expr
-and typ = string * Types.tp
-
-let get_name = fst
-let get_type = snd 
+    | Func of var_tp * var_tp list * expr
 
 let rep_literal lit = match lit.data with 
     | Integer(x)    -> string_of_int x
@@ -43,8 +41,7 @@ let rep_func func = match func.data with
     | Func(def, args, body)  -> 
         "def "  ^ get_name def ^ "(" ^
         (* Ugly hack *)
-        (String.concat ", " (List.map (fun x -> get_name x ^ ": " ^
-            Types.rep_type (get_type x)) args)) ^
+        (String.concat ", " (List.map (fun x -> rep_var x) args)) ^
 
         "): "^ (Types.rep_type (get_type def)) ^
         " = " ^ (rep_expr body) ^ ";"
