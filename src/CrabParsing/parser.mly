@@ -1,12 +1,6 @@
 %{
     open CrabAst
     open Types
-    open CrabEnv
-    open Error
-
-    let types = base_type_env
-
-    let find_type typ = Table.lookup (Symbol.symbol typ) types
 
     let make_loc start end_pos = Location.make start end_pos
 
@@ -17,7 +11,8 @@
         tp = TEmpty
     }
 
-    let make_func name args ty body = Func((name, ty), args, body)
+    let make_func name args ty body =
+        Func((name, ty), args, body)
 %}
 
 %token <int>    INT
@@ -75,11 +70,7 @@ func:
 typ:
     | ty = ALPHANUM
             {
-                match find_type ty with
-                    | Some x    -> x;
-                    | None      -> (raise(ParsingError("At " ^
-                    Location.rep_position (make_loc $startpos $endpos)
-                    ^ " Unknown type " ^ ty)))
+                lookup_type ty 
             }
 /* Arguments ->
  *      ([NONE | argument :: arguments])
@@ -95,7 +86,7 @@ arguments:
 
 argument:
     | arg = ALPHANUM; COLON; ty = typ;
-            { (arg, ty) }
+            { (arg, ty)  }
     ;
 /* Expr ->
  *      literal | (expr) 

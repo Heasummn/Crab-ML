@@ -17,7 +17,7 @@ Library "CrabAst"
   FindLibParent:    Crab
   Path:             src/CrabAst
   Modules:          CrabAst
-  BuildDepends:     Crab.CrabCommon
+  BuildDepends:     Crab.CrabCommon, Crab.CrabEnv
 
 Library "CrabCodegen"
   FindLibParent:    Crab
@@ -28,12 +28,12 @@ Library "CrabCodegen"
 Library "CrabCommon"
   FindLibParent:    Crab
   Path:             src/CrabCommon
-  Modules:          Error, Location, Types
+  Modules:          Error, Location
 
 Library "CrabEnv"
   FindLibParent:    Crab
   Path:             src/CrabEnv
-  Modules:          Symbol, Table
+  Modules:          Symbol, Table, Types
   BuildDepends:     batteries, Crab.CrabCommon
 
 Library "CrabParsing"

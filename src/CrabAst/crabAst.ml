@@ -2,7 +2,7 @@
 
 open Types
 
-type 'a annotation = { data: 'a; position: Location.t; tp: tp }
+type 'a annotation = { data: 'a; position: Location.t; tp: Types.tp }
 
 type literal = simple_literal annotation
 and simple_literal = 
@@ -21,8 +21,12 @@ and simple_expr =
 
 type toplevel = simple_toplevel annotation
 and simple_toplevel =
-    (* def name args type expr *)
-    | Func of var_tp * var_tp list * expr
+    (* def name args expr *)
+    | Func of ty * ty list * expr
+and ty = (string * tp)
+
+let get_name = fst
+let get_type = snd
 
 let rep_literal lit = match lit.data with 
     | Integer(x)    -> string_of_int x
@@ -38,10 +42,10 @@ let rec rep_expr expr = match expr.data with
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
 
 let rep_func func = match func.data with 
-    | Func(def, args, body)  -> 
+    | Func(def, args, body)  ->
         "def "  ^ get_name def ^ "(" ^
         (* Ugly hack *)
-        (String.concat ", " (List.map (fun x -> rep_var x) args)) ^
+        (String.concat ", " (List.map rep_var args)) ^
 
         "): "^ (Types.rep_type (get_type def)) ^
         " = " ^ (rep_expr body) ^ ";"

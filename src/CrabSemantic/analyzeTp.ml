@@ -1,7 +1,6 @@
 open CrabAst
 open Types
 open Error
-open CrabEnv
 
 let vars = base_var_env
 
@@ -54,7 +53,8 @@ and a_binary_op expr =
     let tightest_bind t1 t2 = match t1, t2 with 
         | (TFloat, _)   -> TFloat
         | (_, TFloat)   -> TFloat
-        | (TInt, _)     -> TInt        | _             -> assert false
+        | (TInt, _)     -> TInt        
+        | _             -> assert false
     in
 
     match expr with 
@@ -73,13 +73,11 @@ and a_binary_op expr =
                 )
         | _     -> assert false
 
-
 let annotate_func func = match func.data with
     | Func(def, args, body)  -> 
-
     let inferred = annotate_expr body in
-        let tp = get_type def and name = get_name def in
-        check tp inferred.tp (SyntaxError("In function " ^ name ^ 
+        let tp = get_type (def)  in
+        check tp inferred.tp (SyntaxError("In function " ^ get_name def ^ 
             ", expected type " ^ rep_type tp ^ ", but got type " ^ rep_type inferred.tp));
         {   func with data = Func(def, args, inferred);
             tp = (inferred).tp
