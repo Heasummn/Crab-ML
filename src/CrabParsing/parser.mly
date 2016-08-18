@@ -1,6 +1,7 @@
 %{
     open CrabAst
     open Types
+    open CrabEnv
 
     let make_loc start end_pos = Location.make start end_pos
 

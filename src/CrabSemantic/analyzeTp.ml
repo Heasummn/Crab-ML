@@ -2,8 +2,6 @@ open CrabAst
 open Types
 open Error
 
-let vars = base_var_env
-
 let check_func func args correct otherwise = 
     if (func args) then correct else raise(otherwise)
 
