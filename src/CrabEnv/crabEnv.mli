@@ -1,15 +1,16 @@
 open Types
+open Batteries
 
 type type_env = tp Table.t
-type var_env = tp Table.t
+type var_env = Scope.t Stack.t
 
-val base_type_env   : type_env
-val base_var_env    : var_env
+val base_type_env  	: type_env
 
-val vars        : var_env ref
-val types       : type_env
+val lookup_type 	: string -> tp
 
-val lookup_type : string -> tp
-val lookup_var  : string -> tp
+val types       	: type_env
 
-val add_var     : string -> tp -> unit
+val curr_scope		: Scope.t ref
+val peek_scope		: Scope.t
+val pop_scope		: Scope.t
+val push_scope		: unit

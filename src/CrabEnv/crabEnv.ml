@@ -1,7 +1,11 @@
 open Types
+open Batteries
+open Scope
 
 type type_env = tp Table.t
-type var_env = tp Table.t
+type var_env = Scope.t Stack.t
+
+let env = Stack.create ()
 
 let base_types = 
 	[
@@ -13,18 +17,14 @@ let base_type_env =
 	(List.map (fun (name, ty) -> Symbol.symbol name, ty) base_types)
 	|> Table.of_list
 
-let base_var_env = 
-	Table.empty
-
-let vars = ref base_var_env
 let types = base_type_env
 
-let lookup tbl key exep = match Table.lookup (Symbol.symbol key) tbl with
-	| Some x		-> x
-	| None 			-> raise(exep)
+let lookup_type name = lookup types
+	name (Error.TypeError("Unknown type " ^ name))
 
-let lookup_type name = lookup types name (Error.TypeError("Unknown type " ^ name))
 
-let lookup_var name = lookup !vars name (Error.TypeError("Unknown variable" ^ name))
+let curr_scope = (Stack.push base_var_env env); ref (Stack.top env)
 
-let add_var name ty = vars := Table.add (Symbol.symbol name) ty !vars
+let peek_scope = Stack.top env
+let pop_scope = curr_scope := Stack.pop env; !curr_scope 
+let push_scope = Stack.push base_var_env env; curr_scope := peek_scope 
