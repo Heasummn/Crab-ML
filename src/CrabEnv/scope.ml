@@ -13,6 +13,6 @@ let lookup tbl key exep = match Table.lookup (Symbol.symbol key) tbl with
 	| Some x		-> x
 	| None 			-> raise(exep)
 
-let lookup_var name = lookup !vars name (Error.TypeError("Unknown variable" ^ name))
+let lookup_var name = lookup !vars name (Error.TypeError("Unknown variable " ^ name))
 
 let add_var name ty = vars := Table.add (Symbol.symbol name) ty !vars

@@ -52,9 +52,6 @@ let codegen_proto func = match func.data with
         let ft = function_type (type_to_llvm func.tp) arg_type in
         let f = declare_function name ft glob_module in
 
-        (* Add a scope *)
-        CrabEnv.push_scope;
-
         (* Add variables to named values and register with LLVM *)
         Array.iteri (fun i a ->
             let n = get_name (arg_array.(i)) in

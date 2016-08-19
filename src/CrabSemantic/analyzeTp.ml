@@ -76,11 +76,21 @@ and a_binary_op expr =
 and var_type var = lookup_var var
 
 let annotate_func func = match func.data with
-    | Func(def, args, body)  -> 
+    | Func(def, args, body)  ->
+
+    (* Create a new scope *)
+    CrabEnv.push_scope;
+    (* Populate it *)
+    List.iter(fun x -> add_var (fst x) (snd x)) args;
+
     let inferred = annotate_expr body in
         let tp = get_type (def)  in
         check tp inferred.tp (SyntaxError("In function " ^ get_name def ^ 
             ", expected type " ^ rep_type tp ^ ", but got type " ^ rep_type inferred.tp));
+        
+            (* Get rid of the scope *)
+            ignore(CrabEnv.pop_scope);
+
         {   func with data = Func(def, args, inferred);
             tp = (inferred).tp
         }
