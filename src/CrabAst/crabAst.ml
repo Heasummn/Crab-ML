@@ -18,6 +18,7 @@ and simple_expr =
     | Add of expr *  expr
     | Sub of expr * expr
     | Lit of literal
+    | Var of string
 
 type toplevel = simple_toplevel annotation
 and simple_toplevel =
@@ -40,6 +41,7 @@ let rec rep_expr expr = match expr.data with
     | Div(e1, e2)   -> rep_expr e1 ^ " / " ^ rep_expr e2
     | Neg(e1)       -> "-" ^ rep_expr e1
     | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
+    | Var(v)        -> v
 
 let rep_func func = match func.data with 
     | Func(def, args, body)  ->

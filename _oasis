@@ -23,7 +23,8 @@ Library "CrabCodegen"
   FindLibParent:    Crab
   Path:             src/CrabCodegen
   Modules:          CrabCodegen
-  BuildDepends:     Crab.CrabAst, llvm, llvm.analysis
+  BuildDepends:     Crab.CrabAst, Crab.CrabEnv,
+                    llvm, llvm.analysis
 
 Library "CrabCommon"
   FindLibParent:    Crab
@@ -33,7 +34,7 @@ Library "CrabCommon"
 Library "CrabEnv"
   FindLibParent:    Crab
   Path:             src/CrabEnv
-  Modules:          Symbol, Table, Types
+  Modules:          Symbol, Table, Types, Scope
   BuildDepends:     batteries, Crab.CrabCommon
 
 Library "CrabParsing"
@@ -54,7 +55,8 @@ Executable "crab"
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon, Crab.CrabSemantic
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon,
+                    Crab.CrabSemantic
 
 Executable test_lexing
   Path:             test/lexing

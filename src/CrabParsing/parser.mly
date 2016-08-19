@@ -90,7 +90,8 @@ argument:
             { (arg, ty)  }
     ;
 /* Expr ->
- *      literal | (expr) 
+ *      literal | var
+ *  |   (expr) 
  *  |   - expr
  *  |   expr * expr | expr / expr
  *  |   expr + expr | expr - expr
@@ -98,6 +99,8 @@ argument:
 expr:
     | e1 = literal
         { make_node (Lit e1) $startpos $endpos }
+    | v = ALPHANUM
+        { make_node (Var v) $startpos $endpos }
     | LPAREN e1 = expr RPAREN
         { make_node (Paren e1) $startpos $endpos }
     | MINUS e1 = expr   %prec UMINUS
@@ -117,8 +120,8 @@ expr:
  */
 literal:
     | i = INT                           
-            { make_node (Integer i) $startpos $endpos}
+            { make_node (Integer i) $startpos $endpos }
     | f = FLOAT                         
-            { make_node (Float f) $startpos $endpos}
+            { make_node (Float f) $startpos $endpos }
     ;
 

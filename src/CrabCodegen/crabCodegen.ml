@@ -6,6 +6,8 @@ let context = global_context ()
 let glob_module = create_module context "Crab"
 let builder = builder context
 
+let named_vars: (string, llvalue) Hashtbl.t = Hashtbl.create 15
+
 let dump_val = dump_value
 let dump_mod = dump_module
 
@@ -22,7 +24,7 @@ let rec codegen_expr expr = match expr.data with
     | Lit e1        -> codegen_literal e1
     | Paren e1      -> codegen_expr e1
     | Neg e1        -> build_fneg (codegen_expr e1) "negtmp" builder
-
+    | Var v1        -> Hashtbl.find named_vars v1
     | Add (e1, e2)  -> 
         let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
             build_fadd e1_val e2_val "addtmp" builder
@@ -44,13 +46,27 @@ let type_to_llvm = function
 (* Later, use the type checked type of the function instead of given *)
 let codegen_proto func = match func.data with
     | Func(def, args, _)  -> 
-        let arg_type = Array.of_list (List.map (fun x -> type_to_llvm (get_type x)) args)
+        let arg_array = Array.of_list args in
+        let arg_type = Array.map (fun x -> type_to_llvm (get_type x)) arg_array
         and name = get_name def in
         let ft = function_type (type_to_llvm func.tp) arg_type in
-        declare_function name ft glob_module
+        let f = declare_function name ft glob_module in
+
+        (* Add a scope *)
+        CrabEnv.push_scope;
+
+        (* Add variables to named values and register with LLVM *)
+        Array.iteri (fun i a ->
+            let n = get_name (arg_array.(i)) in
+            Hashtbl.add named_vars n a;
+            set_value_name n a;
+        ) (params f);
+        f
 
 let codegen_func func = match func.data with 
     | Func(_, _, body)  ->
+        (* Clear any old variables *)
+        Hashtbl.clear named_vars;
         let the_function = codegen_proto func in
         let bb = append_block context "entry" the_function in
         position_at_end bb builder;
@@ -58,7 +74,6 @@ let codegen_func func = match func.data with
             let ret_val =   codegen_expr body in
             ignore(build_ret ret_val builder);
             Llvm_analysis.assert_valid_function the_function;
-
             the_function
         with e ->
             delete_function the_function;

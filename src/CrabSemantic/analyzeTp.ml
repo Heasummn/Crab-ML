@@ -1,6 +1,7 @@
 open CrabAst
 open Types
 open Error
+open Scope
 
 let check_func func args correct otherwise = 
     if (func args) then correct else raise(otherwise)
@@ -26,6 +27,7 @@ let rec annotate_expr expr =
         | Paren e1      -> let inferred = annotate_expr e1 in (Paren(inferred), inferred.tp)
         | Neg _         -> let inferred = (a_unary_op expr.data) in 
             (Neg(inferred), inferred.tp)
+        | Var v1        -> let inferred = var_type v1 in (Var(v1), inferred)
 
         (* TODO: Refactor this *)
         | Add _         -> let inferred = (a_binary_op expr.data) in
@@ -70,6 +72,8 @@ and a_binary_op expr =
                     {annotated1 with tp}, {annotated2 with tp}
                 )
         | _     -> assert false
+
+and var_type var = lookup_var var
 
 let annotate_func func = match func.data with
     | Func(def, args, body)  -> 
