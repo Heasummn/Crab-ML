@@ -16,34 +16,58 @@ let int_type = integer_type context 64
 let float_type = double_type context
 let void = void_type context
 
-let codegen_literal literal = match literal.data with 
-    | Integer x     -> const_int int_type x
-    | Float x       -> const_float float_type x
-
-let rec codegen_expr expr = match expr.data with 
-    | Lit e1        -> codegen_literal e1
-    | Paren e1      -> codegen_expr e1
-    | Neg e1        -> build_fneg (codegen_expr e1) "negtmp" builder
-    | Var v1        -> Hashtbl.find named_vars v1
-    | Add (e1, e2)  -> 
-        let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
-            build_fadd e1_val e2_val "addtmp" builder
-    | Sub (e1, e2)  -> 
-        let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
-            build_fsub e1_val e2_val "subtmp" builder
-    | Mult (e1, e2) -> 
-        let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
-            build_fmul e1_val e2_val "multmp" builder
-    | Div (e1, e2)  -> 
-        let e1_val = codegen_expr e1 in let e2_val = codegen_expr e2 in
-            build_fdiv e1_val e2_val "divtmp" builder
-
 let type_to_llvm = function
     | TEmpty -> void
     | TInt   -> int_type
     | TFloat -> float_type
 
-(* Later, use the type checked type of the function instead of given *)
+let llvm_to_type = function
+    | TypeKind.Integer  -> TInt
+    | TypeKind.Double   -> TFloat
+    | TypeKind.Void     -> TEmpty
+    | _                 -> assert false
+
+let codegen_literal literal = match literal.data with 
+    | Integer x     -> const_int int_type x
+    | Float x       -> const_float float_type x
+
+let rec code_neg e1 =
+    let expr = codegen_expr e1 in
+    let tp = llvm_to_type (classify_type (type_of expr)) in
+    let func = match tp with
+        | TFloat    -> build_fneg
+        | TInt      -> build_neg
+        | _         -> assert false
+    in
+    func expr "negtmp" builder
+
+and a_codegen_op func_int func_f e1 e2 name =
+    let expr1 = codegen_expr e1 in let expr2 = codegen_expr e2 in
+        (* We assume that the Type Checking 
+            has assured that these are the same type *)
+    let func = match llvm_to_type (classify_type (type_of expr1)) with
+        | TInt      -> func_int
+        | TFloat    -> func_f
+        | _         -> assert false
+    in 
+    (func expr1 expr2 name builder)
+
+
+and codegen_expr expr = 
+    (* Make typing a bit easier *)
+    let gen_op func_int func_f e1 e2 name = 
+        a_codegen_op func_int func_f e1 e2 name
+    in
+     match expr.data with 
+    | Lit e1        -> codegen_literal e1
+    | Paren e1      -> codegen_expr e1
+    | Neg e1        -> code_neg e1
+    | Var v1        -> Hashtbl.find named_vars v1
+    | Add (e1, e2)  -> gen_op build_add build_fadd e1 e2 "addtmp"
+    | Sub (e1, e2)  -> gen_op build_sub build_fsub e1 e2 "subtmp"
+    | Mult (e1, e2) -> gen_op build_mul build_fmul e1 e2 "multmp"
+    | Div (e1, e2)  -> gen_op build_sdiv build_fdiv e1 e2 "divtmp"
+
 let codegen_proto func = match func.data with
     | Func(def, args, _)  -> 
         let arg_array = Array.of_list args in

@@ -18,6 +18,7 @@ let annotate_lit lit =
         | Integer _         -> TInt        
         | Float _           -> TFloat
     in
+    print_endline ("Literal: " ^ (rep_literal lit) ^ ", with type: " ^ rep_type inferred);
     { lit with tp = inferred }
 
 let rec annotate_expr expr =
@@ -31,13 +32,15 @@ let rec annotate_expr expr =
 
         (* TODO: Refactor this *)
         | Add _         -> let inferred = (a_binary_op expr.data) in
-            (Add(fst inferred, snd inferred), (fst inferred).tp)
+            Add(fst inferred, snd inferred), (fst inferred).tp;
+
         | Sub _         -> let inferred = (a_binary_op expr.data) in
-            (Sub(fst inferred, snd inferred), (fst inferred).tp)
+            Sub(fst inferred, snd inferred), (fst inferred).tp;
         | Mult _         -> let inferred = (a_binary_op expr.data) in
-            (Mult(fst inferred, snd inferred), (fst inferred).tp)
+            Mult(fst inferred, snd inferred), (fst inferred).tp;
         | Div _         -> let inferred = (a_binary_op expr.data) in
-            (Div(fst inferred, snd inferred), (fst inferred).tp)    in
+            Div(fst inferred, snd inferred), (fst inferred).tp
+        in
     {   expr with data = fst typed;
         tp = snd typed
     }
@@ -50,13 +53,6 @@ and a_unary_op expr = match expr with
     | _             -> assert false
 
 and a_binary_op expr = 
-    let tightest_bind t1 t2 = match t1, t2 with 
-        | (TFloat, _)   -> TFloat
-        | (_, TFloat)   -> TFloat
-        | (TInt, _)     -> TInt        
-        | _             -> assert false
-    in
-
     match expr with 
         | Add (e1, e2)
         | Sub (e1, e2)
@@ -66,10 +62,18 @@ and a_binary_op expr =
             annotated2 = annotate_expr e2 in
                 check_int e1 annotated1.tp;
                 check_int e2 annotated2.tp;
-                let tp = tightest_bind annotated1.tp annotated2.tp
-                in
+                
+                (* This is the first major choice within the language
+                    A Binary operator, at least for now, must have the same type 
+                    on both operands *)
+                check annotated1.tp annotated2.tp (TypeError 
+                    ("An Arithmetic Binary Operator requires that the " ^
+                    "operands used within it are of the same type. But, " ^
+                    (rep_type annotated1.tp) ^ " is not the same type as " ^
+                    (rep_type annotated2.tp)));
+                
                 (
-                    {annotated1 with tp}, {annotated2 with tp}
+                    annotated1, annotated2
                 )
         | _     -> assert false
 

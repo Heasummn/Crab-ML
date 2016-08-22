@@ -1,5 +1,5 @@
-def foo(x: float, y: float): float =
-    x
+def foo(x: int, y: float): float =
+    y + 4.0;
 
-def bar(foobar: int): float =
-    -foobar;
+def bar(foobar: float): float =
+    foobar;
