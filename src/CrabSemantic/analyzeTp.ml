@@ -18,7 +18,6 @@ let annotate_lit lit =
         | Integer _         -> TInt        
         | Float _           -> TFloat
     in
-    print_endline ("Literal: " ^ (rep_literal lit) ^ ", with type: " ^ rep_type inferred);
     { lit with tp = inferred }
 
 let rec annotate_expr expr =

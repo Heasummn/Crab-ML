@@ -3,3 +3,6 @@ def foo(x: int, y: float): float =
 
 def bar(foobar: float): float =
     foobar;
+
+def afunc(): int = 
+    3 + 5;        
