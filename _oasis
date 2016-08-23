@@ -34,7 +34,7 @@ Library "CrabCommon"
 Library "CrabEnv"
   FindLibParent:    Crab
   Path:             src/CrabEnv
-  Modules:          Symbol, Table, Types, Scope
+  Modules:          Symbol, Types
   BuildDepends:     batteries, Crab.CrabCommon
 
 Library "CrabParsing"

@@ -31,6 +31,11 @@ let codegen_literal literal = match literal.data with
     | Integer x     -> const_int int_type x
     | Float x       -> const_float float_type x
 
+let store_var value alloca = ignore(build_store value alloca builder)
+
+let create_var func name typ = let builder = builder_at context (instr_begin (entry_block func)) in
+    build_alloca typ name builder
+
 let rec code_neg e1 =
     let expr = codegen_expr e1 in
     let tp = llvm_to_type (classify_type (type_of expr)) in
@@ -63,10 +68,21 @@ and codegen_expr expr =
     | Paren e1      -> codegen_expr e1
     | Neg e1        -> code_neg e1
     | Var v1        -> Hashtbl.find named_vars v1
+    | Assign a1     -> codegen_assign a1
     | Add (e1, e2)  -> gen_op build_add build_fadd e1 e2 "addtmp"
     | Sub (e1, e2)  -> gen_op build_sub build_fsub e1 e2 "subtmp"
     | Mult (e1, e2) -> gen_op build_mul build_fmul e1 e2 "multmp"
     | Div (e1, e2)  -> gen_op build_sdiv build_fdiv e1 e2 "divtmp"
+
+and codegen_assign ((name, ty), expr, body) = 
+    let ll_tp = type_to_llvm ty in
+    let the_func = block_parent (insertion_block builder) in
+        let alloca = create_var the_func name ll_tp in
+        let value = codegen_expr expr in
+            store_var value alloca;
+            Hashtbl.add named_vars name value;
+    codegen_expr body
+    
 
 let codegen_proto func = match func.data with
     | Func(def, args, _)  -> 

@@ -18,7 +18,8 @@ let newline = '\r' | '\n' | "\r\n"
 
 (* Keywords TODO: Replace these with Hashtbl *)
 let def = "def"
-
+let let_stmt = "let"
+let in_stmt = "in"
 
 rule read = 
     parse
@@ -41,6 +42,8 @@ rule read =
     | ','           { COMMA }
 
     | def           { DEF }
+    | let_stmt      { LET }
+    | in_stmt       { IN }
 
     | alphanum      { ALPHANUM (Lexing.lexeme lexbuf) }
 

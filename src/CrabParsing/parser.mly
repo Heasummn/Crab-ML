@@ -21,7 +21,7 @@
 %token <string> ALPHANUM
 
 /* Keywords */
-%token DEF
+%token DEF, LET, IN
 
 /* Operators */
 %token LPAREN RPAREN
@@ -71,10 +71,14 @@ func:
 typ:
     | ty = ALPHANUM
             {
-                lookup_type ty 
+                (* TODO: when we add types, we have to maintain an Env of them *)
+                match lookup_type CrabEnv.base_type_env (Symbol.symbol ty) with
+                    | Some ty   -> ty
+                    (* TODO: Better errors *)
+                    | None      -> (raise(Error.TypeError("Unknown type " ^ ty)))
             }
 /* Arguments ->
- *      ([NONE | argument :: arguments])
+ *      ([NONE | argument, arguments])
  */
 arguments:
     | LPAREN; args = separated_list(COMMA, argument); RPAREN;
@@ -90,7 +94,8 @@ argument:
             { (arg, ty)  }
     ;
 /* Expr ->
- *      literal | var
+ *  |   literal | var
+ *  |   assignment
  *  |   (expr) 
  *  |   - expr
  *  |   expr * expr | expr / expr
@@ -101,6 +106,8 @@ expr:
         { make_node (Lit e1) $startpos $endpos }
     | v = ALPHANUM
         { make_node (Var v) $startpos $endpos }
+    | a = assign;
+        { make_node (Assign a) $startpos $endpos } 
     | LPAREN e1 = expr RPAREN
         { make_node (Paren e1) $startpos $endpos }
     | MINUS e1 = expr   %prec UMINUS
@@ -115,6 +122,14 @@ expr:
         { make_node (Sub (e1, e2)) $startpos $endpos }
     ;
 
+/* Assign -> 
+ *  |   let name: type = expr in expr
+ */
+assign:
+    | LET name = ALPHANUM; COLON; ty = typ; EQUAL; value = expr; IN; 
+        body = expr;    
+            { (name, ty), value, body }
+    ;
 /* Literal ->
  *      INT | FLOAT
  */

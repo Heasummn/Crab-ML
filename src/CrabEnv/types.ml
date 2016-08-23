@@ -1,3 +1,5 @@
+open Batteries
+
 type tp = TInt | TFloat | TEmpty
 
 let rep_type = function
