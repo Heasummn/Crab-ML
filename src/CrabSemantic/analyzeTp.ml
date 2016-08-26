@@ -2,6 +2,7 @@ open CrabAst
 open Types
 open Error
 open Table
+open CrabEnv
 
 let check_func func args correct otherwise = 
     if (func args) then correct else raise(otherwise)
@@ -31,7 +32,7 @@ let rec annotate_expr ctx expr =
         (* This does not return the type of the variable, but rather the type of the body *)
         | Assign _          -> let value = assign_type ctx expr in (value.data, value.tp) 
         | BinOp(e1, op, e2) -> let inferred = op_type ctx expr in (BinOp(e1, op, e2), inferred)
-        in
+    in
     {   expr with data = fst typed;
         tp = snd typed
     }
@@ -44,7 +45,7 @@ and assign_type ctx ass =
         check typ t_val.tp (TypeError ("Variable " ^ name ^ " is expected to have type " ^ rep_type typ 
         ^ ", but has type " ^ rep_type t_val.tp));
         
-        let ctx = Table.add (Symbol.symbol name) typ ctx in
+        let ctx = { ctx with vars = Table.add (Symbol.symbol name) typ ctx.vars } in
 
         let inferred = annotate_expr ctx body in
         Assign((name, typ), value, inferred), typ
@@ -56,9 +57,20 @@ and assign_type ctx ass =
         tp = snd annotated;
     }
 
-and op_type _ _ = 
+and op_type ctx expr = 
     (* Lookup the operator in the context, assert that it is used correctly, and then return it's return type *)
-    assert false
+    let _ = match expr.data with
+        | BinOp(_, op, _) -> 
+                let choices = match MultiTable.lookup (Symbol.symbol op) ctx.ops with
+                    | Some x    -> x
+                    | None      -> assert false
+                in
+                    BatSet.iter (fun (args, ret) -> 
+                        let args = String.concat ", " (List.map(rep_type) args) in
+                        print_endline (op ^ ": " ^ args ^ " -> \n\t" ^ rep_type ret)) choices
+        | _             -> assert false
+        in
+        assert false
 
 
 and a_unary_op ctx expr = match expr with
@@ -69,7 +81,7 @@ and a_unary_op ctx expr = match expr with
     | _             -> assert false
 
 
-and var_type ctx var = match lookup (Symbol.symbol var) ctx with
+and var_type ctx var = match lookup (Symbol.symbol var) ctx.vars with
     | Some ty   -> ty
     | None      -> raise(TypeError("Unknown variable " ^ var))
 
@@ -78,7 +90,7 @@ let annotate_func ctx func = match func.data with
     let sym_args = List.map (fun (x,y) -> Symbol.symbol x, y) args in
     
     (* An ugly hack to join the two ctx's *)
-    let ctx =  Table.of_enum (BatEnum.append (Table.enum ctx.CrabEnv.vars) (Batteries.List.enum sym_args)) in
+    let ctx = { ctx with vars = Table.of_enum (BatEnum.append (Table.enum ctx.vars) (Batteries.List.enum sym_args)) } in
     
 
     let inferred = annotate_expr ctx body in
