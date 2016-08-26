@@ -1,4 +1,4 @@
 open AnalyzeTp
 
-let annotateAST funcs = 
-    List.map annotate_func funcs
+let annotateAST ctx funcs = 
+    List.map (annotate_func ctx) funcs

@@ -73,10 +73,14 @@ and var_type ctx var = match lookup (Symbol.symbol var) ctx with
     | Some ty   -> ty
     | None      -> raise(TypeError("Unknown variable " ^ var))
 
-let annotate_func func = match func.data with
+let annotate_func ctx func = match func.data with
     | Func(def, args, body)  ->
     let sym_args = List.map (fun (x,y) -> Symbol.symbol x, y) args in
-    let ctx = Table.of_list sym_args in
+    
+    (* An ugly hack to join the two ctx's *)
+    let ctx =  Table.of_enum (BatEnum.append (Table.enum ctx.CrabEnv.vars) (Batteries.List.enum sym_args)) in
+    
+
     let inferred = annotate_expr ctx body in
         let tp = get_type (def)  in
         check tp inferred.tp (SyntaxError("In function " ^ get_name def ^ 
