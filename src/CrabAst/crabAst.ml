@@ -15,10 +15,7 @@ type expr = simple_expr annotation
 and simple_expr = 
     | Paren of expr
     | Neg of expr
-    | Mult of expr * expr
-    | Div of expr * expr
-    | Add of expr *  expr
-    | Sub of expr * expr
+    | BinOp of expr * string * expr
     | Lit of literal
     | Var of string
     | Assign of assign
@@ -40,15 +37,12 @@ let rep_literal lit = match lit.data with
     | Float(x)      -> string_of_float x
 
 let rec rep_expr expr = match expr.data with
-    | Lit(e1)       -> rep_literal e1
-    | Add(e1, e2)   -> rep_expr e1 ^ " + " ^ rep_expr e2 
-    | Sub(e1, e2)   -> rep_expr e1 ^ " - " ^ rep_expr e2
-    | Mult(e1, e2)  -> rep_expr e1 ^ " * " ^ rep_expr e2
-    | Div(e1, e2)   -> rep_expr e1 ^ " / " ^ rep_expr e2
-    | Neg(e1)       -> "-" ^ rep_expr e1
-    | Paren(e1)     -> "(" ^ rep_expr e1 ^ ")"
-    | Var(v)        -> v
-    | Assign(ass)   -> rep_assign ass
+    | Lit(e1)           -> rep_literal e1
+    | BinOp(e1, op, e2) -> rep_expr e1 ^ op ^ rep_expr e2
+    | Neg(e1)           -> "-" ^ rep_expr e1
+    | Paren(e1)         -> "(" ^ rep_expr e1 ^ ")"
+    | Var(v)            -> v
+    | Assign(ass)       -> rep_assign ass
 
 and rep_assign ((name, typ), value, body) = "let " ^ name ^ ": " ^ rep_type typ ^ 
     " = " ^ rep_expr value ^ " in " ^ rep_expr body

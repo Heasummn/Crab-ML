@@ -21,6 +21,15 @@ let def = "def"
 let let_stmt = "let"
 let in_stmt = "in"
 
+(* All operators *)
+let all_ops = ['+''-''/''*''!']
+
+(* Non mathematical operators.  *)
+let no_math_ops = ['!']
+
+(* An operator *)
+let ops = no_math_ops+ all_ops*
+
 rule read = 
     parse
     | int           { INT (int_of_string (Lexing.lexeme lexbuf)) }
@@ -44,6 +53,8 @@ rule read =
     | def           { DEF }
     | let_stmt      { LET }
     | in_stmt       { IN }
+    
+    | ops           { OPERATOR(Lexing.lexeme lexbuf) }
 
     | alphanum      { ALPHANUM (Lexing.lexeme lexbuf) }
 

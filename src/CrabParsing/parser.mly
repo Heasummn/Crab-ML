@@ -19,6 +19,7 @@
 %token <int>    INT
 %token <float>  FLOAT
 %token <string> ALPHANUM
+%token <string> OPERATOR
 
 /* Keywords */
 %token DEF, LET, IN
@@ -113,13 +114,15 @@ expr:
     | MINUS e1 = expr   %prec UMINUS
         { make_node (Neg e1) $startpos $endpos }
     | e1 = expr MULT e2 = expr
-        { make_node (Mult (e1, e2)) $startpos $endpos }
+        { make_node (BinOp (e1, "*", e2)) $startpos $endpos }
     | e1 = expr DIV e2 = expr
-        { make_node (Div (e1, e2)) $startpos $endpos }
+        { make_node (BinOp (e1, "/", e2)) $startpos $endpos }
     | e1 = expr PLUS e2 = expr
-        { make_node (Add (e1, e2)) $startpos $endpos }
+        { make_node (BinOp (e1, "+", e2)) $startpos $endpos }
     | e1 = expr MINUS e2 = expr
-        { make_node (Sub (e1, e2)) $startpos $endpos }
+        { make_node (BinOp (e1, "-", e2)) $startpos $endpos }
+    | e1 = expr; op = OPERATOR; e2 = expr;
+        { make_node (BinOp (e1, op, e2)) $startpos $endpos }
     ;
 
 /* Assign -> 

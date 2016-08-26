@@ -21,12 +21,6 @@ let type_to_llvm = function
     | TInt   -> int_type
     | TFloat -> float_type
 
-let llvm_to_type = function
-    | TypeKind.Integer  -> TInt
-    | TypeKind.Double   -> TFloat
-    | TypeKind.Void     -> TEmpty
-    | _                 -> assert false
-
 let codegen_literal literal = match literal.data with 
     | Integer x     -> const_int int_type x
     | Float x       -> const_float float_type x
@@ -36,9 +30,9 @@ let store_var value alloca = ignore(build_store value alloca builder)
 let create_var func name typ = let builder = builder_at context (instr_begin (entry_block func)) in
     build_alloca typ name builder
 
-let rec code_neg e1 =
-    let expr = codegen_expr e1 in
-    let tp = llvm_to_type (classify_type (type_of expr)) in
+let rec code_neg ctx e1 =
+    let expr = codegen_expr ctx e1 in
+    let tp = e1.tp in
     let func = match tp with
         | TFloat    -> build_fneg
         | TInt      -> build_neg
@@ -46,42 +40,46 @@ let rec code_neg e1 =
     in
     func expr "negtmp" builder
 
-and a_codegen_op func_int func_f e1 e2 name =
-    let expr1 = codegen_expr e1 in let expr2 = codegen_expr e2 in
+and codegen_op _ expr = 
+    (* Code generation for arithmetic expressions *)
+   (* let a_gen_op func_int func_f e1 e2 name =
+        let expr1 = codegen_expr ctx e1 in let expr2 = codegen_expr ctx e2 in
         (* We assume that the Type Checking 
             has assured that these are the same type *)
-    let func = match llvm_to_type (classify_type (type_of expr1)) with
-        | TInt      -> func_int
-        | TFloat    -> func_f
-        | _         -> assert false
-    in 
-    (func expr1 expr2 name builder)
+        let func = match e1.tp with
+            | TInt      -> func_int
+            | TFloat    -> func_f
+            | _         -> assert false
+        in 
+        (func expr1 expr2 name builder) 
+    in *)
 
-
-and codegen_expr expr = 
+    match expr.data with
+    | BinOp(_, op, _) -> begin
+        match op with 
+        (* Lookup the operator in the context, and find the function that matches the arguments *)
+            | _ -> assert false
+        end
+    | _ -> assert false
+        
+and codegen_expr ctx expr = 
     (* Make typing a bit easier *)
-    let gen_op func_int func_f e1 e2 name = 
-        a_codegen_op func_int func_f e1 e2 name
-    in
      match expr.data with 
-    | Lit e1        -> codegen_literal e1
-    | Paren e1      -> codegen_expr e1
-    | Neg e1        -> code_neg e1
-    | Var v1        -> Hashtbl.find named_vars v1
-    | Assign a1     -> codegen_assign a1
-    | Add (e1, e2)  -> gen_op build_add build_fadd e1 e2 "addtmp"
-    | Sub (e1, e2)  -> gen_op build_sub build_fsub e1 e2 "subtmp"
-    | Mult (e1, e2) -> gen_op build_mul build_fmul e1 e2 "multmp"
-    | Div (e1, e2)  -> gen_op build_sdiv build_fdiv e1 e2 "divtmp"
+    | Lit e1            -> codegen_literal e1
+    | Paren e1          -> codegen_expr ctx e1
+    | Neg e1            -> code_neg ctx e1
+    | Var v1            -> Hashtbl.find named_vars v1
+    | Assign a1         -> codegen_assign ctx a1
+    | BinOp _           -> codegen_op ctx expr 
 
-and codegen_assign ((name, ty), expr, body) = 
+and codegen_assign ctx ((name, ty), expr, body) = 
     let ll_tp = type_to_llvm ty in
     let the_func = block_parent (insertion_block builder) in
         let alloca = create_var the_func name ll_tp in
-        let value = codegen_expr expr in
+        let value = codegen_expr ctx expr in
             store_var value alloca;
             Hashtbl.add named_vars name value;
-    codegen_expr body
+    codegen_expr ctx body
     
 
 let codegen_proto func = match func.data with
@@ -100,7 +98,7 @@ let codegen_proto func = match func.data with
         ) (params f);
         f
 
-let codegen_func func = match func.data with 
+let codegen_func ctx func = match func.data with 
     | Func(_, _, body)  ->
         (* Clear any old variables *)
         Hashtbl.clear named_vars;
@@ -108,7 +106,7 @@ let codegen_func func = match func.data with
         let bb = append_block context "entry" the_function in
         position_at_end bb builder;
         try
-            let ret_val =   codegen_expr body in
+            let ret_val = codegen_expr ctx body in
             ignore(build_ret ret_val builder);
             Llvm_analysis.assert_valid_function the_function;
             the_function
@@ -116,5 +114,5 @@ let codegen_func func = match func.data with
             delete_function the_function;
             raise e
 
-let codegen_ast tree =
-    List.map codegen_func tree
+let codegen_ast ctx tree =
+    List.map (codegen_func ctx) tree
