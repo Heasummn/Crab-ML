@@ -5,6 +5,8 @@ type op_env = (Types.tp list * Types.tp) MultiTable.t
 
 type ctx = {types: type_env; vars: var_env; ops: op_env}
 
+
+val ops             : (Symbol.t *  (Types.tp list * Types.tp)) list
 val base_type_env   : type_env
 val base_var_env    : var_env
 val base_op_env     : op_env

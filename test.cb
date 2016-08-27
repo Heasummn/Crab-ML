@@ -1,10 +1,11 @@
 def foo(x: int, y: float): float =
-    4.0
+    x;
 
 def bar(foobar: int): int =
     let x: int = foobar in
         let x: int = 5 in
-            x + x + foobar;
+            x + (x + foobar);
 
 def afunc(): int = 
     3 + 5;        
+

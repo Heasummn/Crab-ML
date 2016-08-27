@@ -10,7 +10,7 @@ let check_func func args correct otherwise =
 let check t1 t2 err = if (t1 == t2) then () else (raise(err))
 
 (* The expression to check, and it's type. Expression given for nicer errors *)
-let check_int e1 t1 = check_func (fun (x) -> x == TInt || x == TFloat) t1 () (SyntaxError(
+let check_int e1 t1 = check_func (fun (x) -> x == TInt || x == TFloat) t1 () (TypeError(
     "In expression " ^ rep_expr e1 ^ ", expected numeric type, but instead got " ^ 
     rep_type t1))
 
@@ -30,8 +30,10 @@ let rec annotate_expr ctx expr =
             (Neg(inferred), inferred.tp)
         | Var v1            -> let inferred = var_type ctx v1 in (Var(v1), inferred)
         (* This does not return the type of the variable, but rather the type of the body *)
-        | Assign _          -> let value = assign_type ctx expr in (value.data, value.tp) 
-        | BinOp(e1, op, e2) -> let inferred = op_type ctx expr in (BinOp(e1, op, e2), inferred)
+        | Assign _          -> let value = assign_type ctx expr in (value.data, value.tp)
+        (* op_type returns a tuple of the updated data, and the inferred type  *)
+        | BinOp(_, _, _) -> let (data, inferred) = op_type ctx expr in 
+            (data, inferred)
     in
     {   expr with data = fst typed;
         tp = snd typed
@@ -63,7 +65,7 @@ and op_type ctx expr =
         | BinOp(e1, op, e2) -> 
                 let choices = match MultiTable.lookup (Symbol.symbol op) ctx.ops with
                     | Some x    -> x
-                    | None      -> assert false
+                    | None      -> (raise(TypeError("Unknown operator " ^ op)))
                 in
                     (* We assume that the creation of the operator already checks if it is valid *)
                     (* Therefore, Filtering it should return only one value. *)
@@ -71,24 +73,20 @@ and op_type ctx expr =
                     let set = (BatSet.filter (fun (args, _) ->
                         try
                             (* Assert that the args are equal *)
-                            (e1.tp == List.hd args) && (e2.tp == List.hd (List.tl args))
+                            args = [e1.tp; e2.tp]
                         with
                             | Failure _     -> false    
                         ) choices) in
                     let func = 
                         try
-                            fst (BatSet.pop set)
+                            snd(fst (BatSet.pop set))
                         with
                             | Not_found     -> (raise (
                                 TypeError("Operator " ^ op ^ " is used as if it had type " ^ rep_type e1.tp ^
                             " and " ^ rep_type e2.tp ^ ", but no such operator has been found.")
                             ))
                         in
-                    BatSet.iter (fun (args, ret) -> 
-                        let args = String.concat ", " (List.map(rep_type) args) in
-                        print_endline (op ^ ": " ^ args ^ " -> \n\t" ^ rep_type ret)) choices;
-                    
-                    snd func
+                    (BinOp(e1, op, e2), func)
                     
         | _             -> assert false
         
@@ -116,7 +114,7 @@ let annotate_func ctx func = match func.data with
 
     let inferred = annotate_expr ctx body in
         let tp = get_type (def)  in
-        check tp inferred.tp (SyntaxError("In function " ^ get_name def ^ 
+        check tp inferred.tp (TypeError("In function " ^ get_name def ^ 
             ", expected type " ^ rep_type tp ^ ", but got type " ^ rep_type inferred.tp));
         
         {   func with data = Func(def, args, inferred);

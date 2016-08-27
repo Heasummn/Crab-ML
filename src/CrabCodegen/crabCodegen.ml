@@ -40,9 +40,9 @@ let rec code_neg ctx e1 =
     in
     func expr "negtmp" builder
 
-and codegen_op _ expr = 
+and codegen_op ctx expr = 
     (* Code generation for arithmetic expressions *)
-   (* let a_gen_op func_int func_f e1 e2 name =
+    let a_gen_op func_int func_f e1 e2 name =
         let expr1 = codegen_expr ctx e1 in let expr2 = codegen_expr ctx e2 in
         (* We assume that the Type Checking 
             has assured that these are the same type *)
@@ -52,15 +52,44 @@ and codegen_op _ expr =
             | _         -> assert false
         in 
         (func expr1 expr2 name builder) 
-    in *)
+    in
+    
+    let gen_builtin_op op e1 e2 = match op with 
+            | "+"   -> a_gen_op build_add build_fadd e1 e2 "addtmp"
+            | "-"   -> a_gen_op build_sub build_fsub e1 e2 "subtmp"
+            | "*"   -> a_gen_op build_mul build_fmul e1 e2 "multmp"
+            | "/"   -> a_gen_op build_sdiv build_fdiv e1 e2 "divtmp"
+            | _ -> assert false
+    in
+    
+    let gen_user_op op e1 e2 = 
+        let callee = match lookup_function  ("__crab_func_" ^ op) glob_module with
+            | Some callee   -> callee 
+            | None          -> assert false
+        in
+        let args =  codegen_expr ctx e1 :: codegen_expr ctx e2 :: [] in
+        let args = Array.of_list args in
+        build_call callee args "calltmp" builder
+    in
+
+    let gen_helper = match expr.data with
+        | BinOp(e1, op, e2) ->
+                print_endline ("e1 has type " ^ rep_type e1.tp);
+                let len =  List.length (List.filter (fun (_, (args, ret)) ->
+                    args = [e1.tp; e2.tp] && ret = expr.tp) CrabEnv.ops) in
+                if len >= 1 then
+                    (* This is a built in operator *)
+                    gen_builtin_op op e1 e2 
+                else
+                    gen_user_op op e1 e2
+
+        | _                 -> assert false
+    in
 
     match expr.data with
-    | BinOp(_, op, _) -> begin
-        match op with 
-        (* Lookup the operator in the context, and find the function that matches the arguments *)
-            | _ -> assert false
-        end
-    | _ -> assert false
+        | BinOp _ ->
+            gen_helper
+        | _ -> assert false
         
 and codegen_expr ctx expr = 
     (* Make typing a bit easier *)

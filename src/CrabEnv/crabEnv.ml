@@ -18,7 +18,7 @@ let types =
 let ops = 
 [
     (Symbol.symbol "+", ([TInt; TInt], TInt));    
-    (Symbol.symbol "+", ([TFloat; TFloat], TFloat));    
+    (Symbol.symbol "+", ([TFloat; TFloat], TFloat)); 
     (Symbol.symbol "-", ([TInt; TInt], TInt));    
     (Symbol.symbol "-", ([TFloat; TFloat], TFloat));    
     (Symbol.symbol "*", ([TInt; TInt], TInt));    

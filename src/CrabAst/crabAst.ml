@@ -38,7 +38,7 @@ let rep_literal lit = match lit.data with
 
 let rec rep_expr expr = match expr.data with
     | Lit(e1)           -> rep_literal e1
-    | BinOp(e1, op, e2) -> rep_expr e1 ^ op ^ rep_expr e2
+    | BinOp(e1, op, e2) -> rep_expr e1 ^ " " ^ op ^ " " ^ rep_expr e2
     | Neg(e1)           -> "-" ^ rep_expr e1
     | Paren(e1)         -> "(" ^ rep_expr e1 ^ ")"
     | Var(v)            -> v
