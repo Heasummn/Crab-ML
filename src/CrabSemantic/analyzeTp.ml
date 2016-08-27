@@ -59,18 +59,39 @@ and assign_type ctx ass =
 
 and op_type ctx expr = 
     (* Lookup the operator in the context, assert that it is used correctly, and then return it's return type *)
-    let _ = match expr.data with
-        | BinOp(_, op, _) -> 
+    match expr.data with
+        | BinOp(e1, op, e2) -> 
                 let choices = match MultiTable.lookup (Symbol.symbol op) ctx.ops with
                     | Some x    -> x
                     | None      -> assert false
                 in
+                    (* We assume that the creation of the operator already checks if it is valid *)
+                    (* Therefore, Filtering it should return only one value. *)
+                    let e1 = annotate_expr ctx e1 and e2 = annotate_expr ctx e2 in
+                    let set = (BatSet.filter (fun (args, _) ->
+                        try
+                            (* Assert that the args are equal *)
+                            (e1.tp == List.hd args) && (e2.tp == List.hd (List.tl args))
+                        with
+                            | Failure _     -> false    
+                        ) choices) in
+                    let func = 
+                        try
+                            fst (BatSet.pop set)
+                        with
+                            | Not_found     -> (raise (
+                                TypeError("Operator " ^ op ^ " is used as if it had type " ^ rep_type e1.tp ^
+                            " and " ^ rep_type e2.tp ^ ", but no such operator has been found.")
+                            ))
+                        in
                     BatSet.iter (fun (args, ret) -> 
                         let args = String.concat ", " (List.map(rep_type) args) in
-                        print_endline (op ^ ": " ^ args ^ " -> \n\t" ^ rep_type ret)) choices
+                        print_endline (op ^ ": " ^ args ^ " -> \n\t" ^ rep_type ret)) choices;
+                    
+                    snd func
+                    
         | _             -> assert false
-        in
-        assert false
+        
 
 
 and a_unary_op ctx expr = match expr with
@@ -89,7 +110,7 @@ let annotate_func ctx func = match func.data with
     | Func(def, args, body)  ->
     let sym_args = List.map (fun (x,y) -> Symbol.symbol x, y) args in
     
-    (* An ugly hack to join the two ctx's *)
+    (* An ugly hack to join the two ctx's, TODO: Make a function *)
     let ctx = { ctx with vars = Table.of_enum (BatEnum.append (Table.enum ctx.vars) (Batteries.List.enum sym_args)) } in
     
 
