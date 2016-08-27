@@ -4,6 +4,8 @@ open Error
 open Table
 open CrabEnv
 
+let func_context = ref base_ctx
+
 let check_func func args correct otherwise = 
     if (func args) then correct else raise(otherwise)
 
@@ -32,7 +34,7 @@ let rec annotate_expr ctx expr =
         (* This does not return the type of the variable, but rather the type of the body *)
         | Assign _          -> let value = assign_type ctx expr in (value.data, value.tp)
         (* op_type returns a tuple of the updated data, and the inferred type  *)
-        | BinOp(_, _, _) -> let (data, inferred) = op_type ctx expr in 
+        | BinOp _           -> let (data, inferred) = op_type ctx expr in 
             (data, inferred)
     in
     {   expr with data = fst typed;
@@ -62,8 +64,8 @@ and assign_type ctx ass =
 and op_type ctx expr = 
     (* Lookup the operator in the context, assert that it is used correctly, and then return it's return type *)
     match expr.data with
-        | BinOp(e1, op, e2) -> 
-                let choices = match MultiTable.lookup (Symbol.symbol op) ctx.ops with
+        | BinOp(e1, op, e2) ->
+                let choices = match MultiTable.lookup (Symbol.symbol op) !func_context.ops with
                     | Some x    -> x
                     | None      -> (raise(TypeError("Unknown operator " ^ op)))
                 in
@@ -120,3 +122,27 @@ let annotate_func ctx func = match func.data with
         {   func with data = Func(def, args, inferred);
             tp = (inferred).tp
         }
+    
+    | Operator((name, ty), args, body) ->
+        let sym_name = Symbol.symbol name in
+        let types = List.map snd args in
+        let len = List.length args in
+        if len > 2 then
+            (raise(TypeError("Operator " ^ name ^ " must have at most 2 arguments, but it has " ^ 
+            string_of_int len ^ " arguments.")));
+            
+        let sym_args = List.map (fun (x,y) -> Symbol.symbol x, y) args in
+    
+        (* An ugly hack to join the two ctx's, TODO: Make a function *)
+        let ctx = { ctx with vars = Table.of_enum (BatEnum.append (Table.enum ctx.vars) (Batteries.List.enum sym_args)) } in
+
+        let ops = MultiTable.add sym_name (types, ty) ctx.ops in
+        func_context := { ctx with ops };
+        let inferred = annotate_expr ctx body in
+            check ty inferred.tp (TypeError("In operator " ^ name ^ 
+                ", expected type " ^ rep_type ty ^ ", but got type " ^ rep_type inferred.tp));
+        
+            {   func with data = Operator((name, ty), args, inferred);
+                tp = (inferred).tp
+            }
+        

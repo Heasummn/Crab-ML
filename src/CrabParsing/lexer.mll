@@ -18,8 +18,10 @@ let newline = '\r' | '\n' | "\r\n"
 
 (* Keywords TODO: Replace these with Hashtbl *)
 let def = "def"
+let operator_word = "operator"
 let let_stmt = "let"
 let in_stmt = "in"
+
 
 (* All operators *)
 let all_ops = ['+''-''/''*''!']
@@ -28,7 +30,7 @@ let all_ops = ['+''-''/''*''!']
 let no_math_ops = ['!']
 
 (* An operator *)
-let ops = no_math_ops+ all_ops*
+let ops = all_ops+
 
 rule read = 
     parse
@@ -53,6 +55,7 @@ rule read =
     | def           { DEF }
     | let_stmt      { LET }
     | in_stmt       { IN }
+    | operator_word { OP }
     
     | ops           { OPERATOR(Lexing.lexeme lexbuf) }
 

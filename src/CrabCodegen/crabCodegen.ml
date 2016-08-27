@@ -16,6 +16,9 @@ let int_type = integer_type context 64
 let float_type = double_type context
 let void = void_type context
 
+(* Prefixes *)
+let op_prefix = "__crab_op_"
+
 let type_to_llvm = function
     | TEmpty -> void
     | TInt   -> int_type
@@ -63,7 +66,7 @@ and codegen_op ctx expr =
     in
     
     let gen_user_op op e1 e2 = 
-        let callee = match lookup_function  ("__crab_func_" ^ op) glob_module with
+        let callee = match lookup_function (op_prefix ^ op) glob_module with
             | Some callee   -> callee 
             | None          -> assert false
         in
@@ -74,9 +77,8 @@ and codegen_op ctx expr =
 
     let gen_helper = match expr.data with
         | BinOp(e1, op, e2) ->
-                print_endline ("e1 has type " ^ rep_type e1.tp);
-                let len =  List.length (List.filter (fun (_, (args, ret)) ->
-                    args = [e1.tp; e2.tp] && ret = expr.tp) CrabEnv.ops) in
+                let len =  List.length (List.filter (fun (try_op, (args, ret)) ->
+                    Symbol.name try_op = op && args = [e1.tp; e2.tp] && ret = expr.tp) CrabEnv.ops) in
                 if len >= 1 then
                     (* This is a built in operator *)
                     gen_builtin_op op e1 e2 
@@ -111,7 +113,7 @@ and codegen_assign ctx ((name, ty), expr, body) =
     codegen_expr ctx body
     
 
-let codegen_proto func = match func.data with
+let rec codegen_proto func = match func.data with
     | Func(def, args, _)  -> 
         let arg_array = Array.of_list args in
         let arg_type = Array.map (fun x -> type_to_llvm (get_type x)) arg_array
@@ -126,9 +128,28 @@ let codegen_proto func = match func.data with
             set_value_name n a;
         ) (params f);
         f
+    | Operator((name, ty), args, body) ->
+            let name = op_prefix ^ name in
+            let node = Func((name, ty), args, body) in
+            codegen_proto { func with data = node }
 
 let codegen_func ctx func = match func.data with 
     | Func(_, _, body)  ->
+        begin (* Clear any old variables *)
+        Hashtbl.clear named_vars;
+        let the_function = codegen_proto func in
+        let bb = append_block context "entry" the_function in
+        position_at_end bb builder;
+        try
+            let ret_val = codegen_expr ctx body in
+            ignore(build_ret ret_val builder);
+            Llvm_analysis.assert_valid_function the_function;
+            the_function;
+        with e -> 
+            delete_function the_function;
+            raise e
+        end
+    | Operator(_, _, body) ->
         (* Clear any old variables *)
         Hashtbl.clear named_vars;
         let the_function = codegen_proto func in
@@ -138,10 +159,10 @@ let codegen_func ctx func = match func.data with
             let ret_val = codegen_expr ctx body in
             ignore(build_ret ret_val builder);
             Llvm_analysis.assert_valid_function the_function;
-            the_function
-        with e ->
+            the_function;
+        with e -> 
             delete_function the_function;
-            raise e
+            raise e    
 
 let codegen_ast ctx tree =
     List.map (codegen_func ctx) tree

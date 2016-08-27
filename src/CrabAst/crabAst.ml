@@ -26,6 +26,7 @@ type toplevel = simple_toplevel annotation
 and simple_toplevel =
     (* def name args expr *)
     | Func of ty * ty list * expr
+    | Operator of ty * ty list * expr
 
 
 (* This works for all tp *)
@@ -51,6 +52,13 @@ and rep_assign ((name, typ), value, body) = "let " ^ name ^ ": " ^ rep_type typ 
 let rep_func func = match func.data with 
     | Func(def, args, body)  ->
         "def "  ^ get_name def ^ "(" ^
+        (* Ugly hack *)
+        (String.concat ", " (List.map rep_var args)) ^
+
+        "): "^ (Types.rep_type (get_type def)) ^
+        " = " ^ (rep_expr body) ^ ";"
+    | Operator(def, args, body) ->  
+        "operator "  ^ get_name def ^ "(" ^
         (* Ugly hack *)
         (String.concat ", " (List.map rep_var args)) ^
 

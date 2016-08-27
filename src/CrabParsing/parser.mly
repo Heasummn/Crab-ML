@@ -14,6 +14,9 @@
 
     let make_func name args ty body =
         Func((name, ty), args, body)
+
+    let make_op name args ty body = 
+        Operator((name, ty), args, body)
 %}
 
 %token <int>    INT
@@ -22,7 +25,7 @@
 %token <string> OPERATOR
 
 /* Keywords */
-%token DEF, LET, IN
+%token DEF, LET, IN, OP
 
 /* Operators */
 %token LPAREN RPAREN
@@ -45,7 +48,7 @@
  */
 program:
     | stmts = funcs EOF         
-            { stmts }
+            { stmts } 
     ;
 
 /* Funcs ->
@@ -55,6 +58,8 @@ funcs:
     |       { [] }
     | f = func; fs = funcs;
             { f::fs }
+    | f = op; fs = funcs
+        { f::fs }
     ;
 
 /* Func ->
@@ -65,6 +70,11 @@ func:
         EQUAL; body = expr; option(SEMI);
             { make_node (make_func name args ty body) $startpos $endpos }
     ;
+
+op:
+    | OP; name = OPERATOR; args = arguments; COLON; ty = typ;
+        EQUAL; body = expr; option(SEMI);
+            { make_node (make_op name args ty body) $startpos $endpos }
 
 /* Type ->
  *      ALPHANUM
@@ -121,8 +131,8 @@ expr:
         { make_node (BinOp (e1, "+", e2)) $startpos $endpos }
     | e1 = expr MINUS e2 = expr
         { make_node (BinOp (e1, "-", e2)) $startpos $endpos }
-    | e1 = expr; op = OPERATOR; e2 = expr;
-        { make_node (BinOp (e1, op, e2)) $startpos $endpos }
+    | e1 = expr; name = OPERATOR; e2 = expr;
+        { make_node (BinOp (e1, name, e2)) $startpos $endpos }
     ;
 
 /* Assign -> 

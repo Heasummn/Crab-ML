@@ -8,4 +8,6 @@ let lookup value env = if mem value env
     else
         None
 
+let add key value env = add key value env
+
 let of_list lst = of_enum (List.enum lst)
