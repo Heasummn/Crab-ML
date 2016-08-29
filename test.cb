@@ -1,6 +1,7 @@
 operator +!(x: int, y: int): int = 
     x + y + 1
 
+
 def foo(x: int, y: float): float =
     y;
 
@@ -12,3 +13,5 @@ def bar(foobar: int): int =
 def afunc(): int = 
     3 +! 5;        
 
+def main(): int = 
+    5;

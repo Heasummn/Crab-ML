@@ -1,6 +1,7 @@
 open CrabCodegen
 open CrabAst
 open CrabSemantic
+open CrabCompile
 
 let filename = Sys.argv.(1)
 
@@ -13,7 +14,9 @@ let main () =
         let parsed = CrabParsing.process_chan input in
         print_ast parsed;
         let typed = annotateAST ctx parsed in
-        dump_funcs (codegen_ast ctx typed);        
+        ignore(codegen_ast ctx typed);
+        init;
+        create CrabCodegen.glob_module;
     with 
         | Error.SyntaxError (msg)   -> Printf.fprintf stderr "Syntax Error: %s\n" msg
         | Error.ParsingError(msg)   -> Printf.fprintf stderr "Parsing Error: %s\n" msg

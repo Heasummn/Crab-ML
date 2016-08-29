@@ -123,16 +123,38 @@ let annotate_func ctx func = match func.data with
             tp = (inferred).tp
         }
     
-    | Operator((name, ty), args, body) ->
+    | Operator((name, ty), args, body) -> 
+        
         let sym_name = Symbol.symbol name in
         let types = List.map snd args in
+        begin
+            match (MultiTable.lookup sym_name (!func_context).ops) with
+                | Some func     ->  
+                        if (BatSet.mem (types, ty) func) then begin
+                            (* This exact function has been declared before *)
+                            (raise(TypeError("The operator " ^ name ^ " has been declared with the type " ^
+                            String.concat " -> " (List.map rep_type types) ^ " -> " ^
+                            rep_type ty ^ " previously."
+                            ))) end;
+
+                        let set = BatSet.elements (BatSet.filter (fun (args, _) -> args = types) func) in
+                            if (List.length set >= 1) then begin
+                                (* There is at least one function with the same args, but not the same return *)
+                                (raise(TypeError("Operator " ^ name ^
+                                " has been declared with the arguments " ^
+                                String.concat " -> " (List.map rep_type types) ^
+                                " multiple times. Overloading of an operator cannot " ^ 
+                                "differ only by return type.")))
+                            end
+                | None          -> ();
+        end; 
         let len = List.length args in
         if len > 2 then
-            (raise(TypeError("Operator " ^ name ^ " must have at most 2 arguments, but it has " ^ 
+            (raise(TypeError("Operator " ^ name ^ " must have at most 2 arguments, but it has " ^
             string_of_int len ^ " arguments.")));
             
         let sym_args = List.map (fun (x,y) -> Symbol.symbol x, y) args in
-    
+     
         (* An ugly hack to join the two ctx's, TODO: Make a function *)
         let ctx = { ctx with vars = Table.of_enum (BatEnum.append (Table.enum ctx.vars) (Batteries.List.enum sym_args)) } in
 

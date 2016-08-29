@@ -31,6 +31,12 @@ Library "CrabCommon"
   Path:             src/CrabCommon
   Modules:          Error, Location
 
+Library "CrabCompile"
+  FindLibParent:    Crab
+  Path:             src/CrabCompile
+  Modules:          CrabCompile
+  BuildDepends:     llvm, llvm.target, llvm.all_backends
+
 Library "CrabEnv"
   FindLibParent:    Crab
   Path:             src/CrabEnv
@@ -55,7 +61,7 @@ Executable "crab"
   MainIs:           crab.ml
   Install:          true
   CompiledObject:   best
-  BuildDepends:     Crab.CrabCodegen, Crab.CrabParsing, Crab.CrabCommon,
+  BuildDepends:     Crab.CrabCodegen, Crab.CrabCompile, Crab.CrabParsing, Crab.CrabCommon,
                     Crab.CrabSemantic
 
 Executable test_lexing

@@ -19,4 +19,4 @@ let symbol (str: string) =
 		let sym = (str, !next_sym) in
 			Hashtbl.add syms str !next_sym;
 			incr next_sym;
-			sym
+            sym
