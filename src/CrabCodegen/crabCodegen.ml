@@ -20,9 +20,11 @@ let void = void_type context
 let op_prefix = "__crab_op_"
 
 let type_to_llvm = function
-    | TEmpty -> void
-    | TInt   -> int_type
-    | TFloat -> float_type
+    | TEmpty    -> void
+    | TInt      -> int_type
+    | TFloat    -> float_type
+    | TArrow _  -> assert false
+
 
 let codegen_literal literal = match literal.data with 
     | Integer x     -> const_int int_type x
