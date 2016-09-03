@@ -13,3 +13,15 @@ let rec rep_type = function
 	| TEmpty	        -> "empty"
 
 let rep_var name = fst name ^ ": " ^ rep_type (snd name)
+
+let rec arrow_list = function
+    | TArrow(tp1, tp2)  -> arrow_list tp1 @ arrow_list tp2
+    | x                 -> [x]
+
+
+let list_arrow lst = 
+    if List.length lst > 0 then
+        List.fold_left (fun arrow arg ->
+             TArrow(arrow, arg)) (List.hd lst) (List.tl lst)
+    else
+        TEmpty

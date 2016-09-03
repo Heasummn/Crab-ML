@@ -17,6 +17,7 @@ and simple_expr =
     | Neg of expr
     | BinOp of expr * string * expr
     | Lit of literal
+    | Call of string * expr list
     | Var of string
     | Assign of assign
 
@@ -25,9 +26,16 @@ and assign = ty * expr * expr
 type toplevel = simple_toplevel annotation
 and simple_toplevel =
     (* def name args expr *)
-    | Func of ty * ty list * expr
-    | Operator of ty * ty list * expr
+    | Func of ty * (string list * tp) * expr
+    | Operator of ty * (string list * tp)  * expr
+    | Extern of ty * (string list * tp)
 
+
+let conv_args args = 
+    let arg_list = fst args in
+    let types = arrow_list (snd args) in
+    List.combine arg_list types
+    
 
 (* This works for all tp *)
 let get_name = fst
@@ -41,6 +49,7 @@ let rec rep_expr expr = match expr.data with
     | Lit(e1)           -> rep_literal e1
     | BinOp(e1, op, e2) -> rep_expr e1 ^ " " ^ op ^ " " ^ rep_expr e2
     | Neg(e1)           -> "-" ^ rep_expr e1
+    | Call(name, exprs) -> name ^ "(" ^ String.concat ", " (List.map rep_expr exprs) ^ ")"
     | Paren(e1)         -> "(" ^ rep_expr e1 ^ ")"
     | Var(v)            -> v
     | Assign(ass)       -> rep_assign ass
@@ -49,20 +58,36 @@ and rep_assign ((name, typ), value, body) = "let " ^ name ^ ": " ^ rep_type typ 
     " = " ^ rep_expr value ^ " in " ^ rep_expr body
 
 
-let rep_func func = match func.data with 
-    | Func(def, args, body)  ->
+let rep_func func = match func.data with
+
+    | Func(def, args, body)  -> 
         "def "  ^ get_name def ^ "(" ^
         (* Ugly hack *)
-        (String.concat ", " (List.map rep_var args)) ^
-
+        begin
+            if (snd args <> TEmpty) then
+                (String.concat ", " (List.map rep_var (conv_args args)))
+            else
+                ""
+        end
+        ^
         "): "^ (Types.rep_type (get_type def)) ^
         " = " ^ (rep_expr body) ^ ";"
-    | Operator(def, args, body) ->  
+    | Operator(def, args, body) ->
+        let args = conv_args args in 
         "operator "  ^ get_name def ^ "(" ^
         (* Ugly hack *)
         (String.concat ", " (List.map rep_var args)) ^
 
         "): "^ (Types.rep_type (get_type def)) ^
         " = " ^ (rep_expr body) ^ ";"
+    | Extern(def, args)     ->
+        "extern " ^ get_name def ^ "(" ^
+        begin
+            if (snd args <> TEmpty) then
+                String.concat ", " (List.map rep_var (conv_args args))
+            else
+                ""
+        end
+        ^ "): " ^ Types.rep_type (get_type def) ^ ";"
 
 let print_ast = List.iter (fun x -> print_endline(rep_func x))

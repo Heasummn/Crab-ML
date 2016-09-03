@@ -1,8 +1,12 @@
+extern pint(x: int): int;
+
 operator +!(x: int, y: int): int = 
     x + y + 1
 
+operator !(x:int, y: int): int = 
+    y
 
-def foo(x: int, y: float): float =
+def foo(x: int, y: int): int =
     y;
 
 def bar(foobar: int): int =
@@ -14,4 +18,4 @@ def afunc(): int =
     3 +! 5;        
 
 def main(): int = 
-    5;
+    pint(5) ! (5 + 4) ! pint(10)

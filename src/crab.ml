@@ -15,6 +15,7 @@ let main () =
         print_ast parsed;
         let typed = annotateAST ctx parsed in
         ignore(codegen_ast ctx typed);
+        dump_mod CrabCodegen.glob_module;
         init;
         create CrabCodegen.glob_module;
     with 

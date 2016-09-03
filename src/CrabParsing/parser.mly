@@ -25,7 +25,7 @@
 %token <string> OPERATOR
 
 /* Keywords */
-%token DEF, LET, IN, OP
+%token DEF, LET, IN, OP, EXTERN
 
 /* Operators */
 %token LPAREN RPAREN
@@ -60,6 +60,8 @@ funcs:
             { f::fs }
     | f = op; fs = funcs
         { f::fs }
+    | f = extern; fs = funcs;
+        { f::fs }
     ;
 
 /* Func ->
@@ -75,7 +77,11 @@ op:
     | OP; name = OPERATOR; args = arguments; COLON; ty = typ;
         EQUAL; body = expr; option(SEMI);
             { make_node (make_op name args ty body) $startpos $endpos }
+    ;
 
+extern:
+    | EXTERN; name = ALPHANUM; args = arguments; COLON; ty = typ; option(SEMI);
+        { make_node (Extern((name, ty), args)) $startpos $endpos }
 /* Type ->
  *      ALPHANUM
  */
@@ -88,12 +94,19 @@ typ:
                     (* TODO: Better errors *)
                     | None      -> (raise(Error.TypeError("Unknown type " ^ ty)))
             }
+    ;
 /* Arguments ->
  *      ([NONE | argument, arguments])
  */
 arguments:
     | LPAREN; args = separated_list(COMMA, argument); RPAREN;
-            { args }
+            {
+                if List.length args > 0 then
+                    List.fold_left (fun (prev_name, arrow) (name, arg) ->
+                        (List.append prev_name name, TArrow(arrow, arg))) (List.hd args) (List.tl args)
+                else
+                    ([""], TEmpty)
+            }
     ;
 
 /* Argument ->
@@ -102,7 +115,7 @@ arguments:
 
 argument:
     | arg = ALPHANUM; COLON; ty = typ;
-            { (arg, ty)  }
+            { ([arg], ty)  }
     ;
 /* Expr ->
  *  |   literal | var
@@ -123,6 +136,8 @@ expr:
         { make_node (Paren e1) $startpos $endpos }
     | MINUS e1 = expr   %prec UMINUS
         { make_node (Neg e1) $startpos $endpos }
+    | callee = ALPHANUM; LPAREN; args = separated_list(COMMA, expr); RPAREN;
+        { make_node (Call (callee, args)) $startpos $endpos }
     | e1 = expr MULT e2 = expr
         { make_node (BinOp (e1, "*", e2)) $startpos $endpos }
     | e1 = expr DIV e2 = expr
