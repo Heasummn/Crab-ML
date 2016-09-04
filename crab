@@ -57,7 +57,6 @@ def call_exit(arr):
 
 def compile(files, output="a"):
     try:
-        call_exit(["gcc", "-o", main_dir + "prelude.o", "-c", main_dir + "prelude.c"])
         call_exit(["gcc", "-o", output] + files + [main_dir + "prelude.o"])
     except OSError as e:
         if e.errno == os.errno.ENOENT:
@@ -120,7 +119,6 @@ if args.output:
         filenames.append("".join(names[2:]) + name)
     if args.compile:
         # We want to compile multiple .o files into one .o file
-        call_exit(["gcc", "-o", main_dir + "prelude.o", "-c", main_dir + "prelude.c"])
         call_exit(["ld", "-r"] + filenames + [main_dir + 'prelude.o', "-o", args.output])
         # Quietly delete all .o files
         for fname in filenames:
