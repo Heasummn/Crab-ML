@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import argparse
-from subprocess import call
+from subprocess import call, STDOUT
 import sys
 import os.path
+import os
+
+main_dir = os.path.dirname(os.path.realpath(__file__)) + "/"
 
 parser = argparse.ArgumentParser(
     description="Build tool for Crab, a small functional Programming language")
@@ -13,19 +16,30 @@ parser.add_argument('--build', '-b',
                     action="store_true"
                     )
 
-parser.add_argument('--clean', '-c',
+parser.add_argument('--clean',
                     help="""Clean the generated files.
                     Run if a strange error occurs in building""",
                     action="store_true"
                     )
 
 parser.add_argument('--test', '-t',
+                    action="store_true",
                     help="Run tests for Crab Compiler",
-                    action="store_true")
+                    )
 
-parser.add_argument('filename',
-                    nargs="?",
-                    help="Run Crab program specified")
+parser.add_argument('filenames',
+                    metavar='filename',
+                    nargs="+",
+                    help="Run Crab program specified"
+                    )
+
+parser.add_argument('--output', '-o',
+                    action='store',
+                    help="Output executable or object file for Crab"
+                   )
+parser.add_argument('--compile', '-c',
+                    action='store_true',
+                    help="Compile file to an object file")
 
 args = parser.parse_args()
 
@@ -37,11 +51,27 @@ def call_exit(arr):
         print("\nFailure.")
         sys.exit(0)
 
+def compile(files, output="a"):
+    try:
+        call_exit(["gcc", "-o", main_dir + "prelude.o" "-c", main_dir + "prelude.c"])
+        call_exit(["gcc", "-o", output] + files + [main_dir + "prelude.o"])
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            print("""Currently, Crab only supports linking with GCC. 
+                    If you want to use a different linker, you will need to pass the -c option to Crab """)
+
+def link(files, output="a.o"):
+    pass
+
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
 
-call_exit(["clear"])
+# If we're using any of the commands for development
+if args.clean or args.build or args.test:
+    if (os.getcwd() != main_dir):
+        print("You must develop Crab in the directory that the Crab executable is located within")
+        sys.exit(0)
 
 if args.clean:
     call_exit(["make", "clean"])
@@ -50,7 +80,7 @@ if args.clean:
 
 if args.build:
     call_exit(['oasis', 'setup'])
-    call_exit(['./configure'])
+    call_exit(['configure'])
     call_exit(['clear'])
     call_exit(["make", "build"])
     call_exit(["mv", "crab.native", "crab"])
@@ -58,22 +88,44 @@ if args.build:
     print()
 
 if args.test:
-    call_exit(["./configure", "--enable-tests"])
+    call_exit(["configure", "--enable-tests"])
     call_exit(["clear"])
     call_exit(['make', 'test'])
     call_exit(["clear"])
     print()
 
-if args.filename is not None:
-    fname = args.filename
-
-    if os.path.isfile(fname):
-        # If this doesn't exist, the user hasn't built yet
-        try:
-            call_exit(["./crab", fname])
-        except FileNotFoundError:
-            print("Please build before running")
+if len(args.filenames) > 0:
+    fnames = args.filenames
+    for filename in fnames:
+        if os.path.isfile(filename):
+            # If this doesn't exist, the user hasn't built yet, or it's not in the path
+            try:
+                call_exit(["crab", filename])
+            except FileNotFoundError:
+                print("Please build before running, or add Crab to your PATH variable.")
+                sys.exit(0)
+        else:
+            print("Argument " + filename + " is not a file.")
             sys.exit(1)
+
+if args.output:
+    fnull = open(os.devnull, 'w')
+    filenames = []
+    for fname in args.filenames:
+        names = fname.split(".")
+        name = names[-2]
+        name += ".o"
+        filenames.append("".join(names[2:]) + name)
+    if args.compile:
+        # We want to compile multiple .o files into one .o file
+        call_exit(["gcc", "-o", main_dir + "prelude.o", "-c", main_dir + "prelude.c"])
+        call_exit(["ld", "-r"] + filenames + [main_dir + 'prelude.o', "-o", args.output])
+        # Quietly delete all .o files
+        for fname in filenames:
+            call(["rm", fname], stdout=fnull, stderr=STDOUT)
     else:
-        print("Argument " + fname + " is not a file.")
-        sys.exit(1)
+        # We want to convert a source file into an executable
+        compile(filenames, args.output)
+        # Same thing as above 
+        for fname in filenames:
+            call(["rm", fname], stdout=fnull, stderr=STDOUT)

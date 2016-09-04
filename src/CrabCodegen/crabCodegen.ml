@@ -102,7 +102,6 @@ and codegen_expr ctx expr =
     | Paren e1          -> codegen_expr ctx e1
     | Neg e1            -> code_neg ctx e1
     | Call(name, exprs) ->
-            print_endline ("Calling " ^ name);
         let callee = match lookup_function name glob_module with 
             | Some callee   -> callee
             | None          -> assert false

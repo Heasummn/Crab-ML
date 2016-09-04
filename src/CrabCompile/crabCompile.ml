@@ -1,12 +1,11 @@
 open Llvm_target
 open Llvm_all_backends
 
-let init = initialize ()
+let init_compiler = initialize ()
 
-let create modu = 
+let create_obj output modu = 
     let triple = Target.default_triple () in
-    print_endline triple;
     let target = Target.by_triple triple in
     let machine = TargetMachine.create ~triple target in
-    TargetMachine.emit_to_file modu CodeGenFileType.ObjectFile "_build/executable.o" machine
+    TargetMachine.emit_to_file modu CodeGenFileType.ObjectFile output machine
         

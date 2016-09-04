@@ -1,9 +1,10 @@
 open CrabCodegen
-open CrabAst
 open CrabSemantic
 open CrabCompile
+open Batteries.String
 
 let filename = Sys.argv.(1)
+let output = fst (rsplit filename ".") ^ ".o"
 
 let dump_funcs = List.iter (fun x -> dump_val x)
 
@@ -12,12 +13,10 @@ let main () =
     try
         let ctx = CrabEnv.base_ctx in
         let parsed = CrabParsing.process_chan input in
-        print_ast parsed;
         let typed = annotateAST ctx parsed in
         ignore(codegen_ast ctx typed);
-        dump_mod CrabCodegen.glob_module;
-        init;
-        create CrabCodegen.glob_module;
+        init_compiler;
+        create_obj output CrabCodegen.glob_module;
     with 
         | Error.SyntaxError (msg)   -> Printf.fprintf stderr "Syntax Error: %s\n" msg
         | Error.ParsingError(msg)   -> Printf.fprintf stderr "Parsing Error: %s\n" msg
