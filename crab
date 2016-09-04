@@ -10,6 +10,7 @@ main_dir = os.path.dirname(os.path.realpath(__file__)) + "/"
 fnull = open(os.devnull, 'w')
 
 parser = argparse.ArgumentParser(
+    prog = "Crab",
     description="Build tool for Crab, a small functional Programming language")
 
 parser.add_argument('--build', '-b',
@@ -41,6 +42,8 @@ parser.add_argument('--output', '-o',
 parser.add_argument('--compile', '-c',
                     action='store_true',
                     help="Compile file to an object file")
+
+parser.add_argument('--version', action='version', version='%(prog)s 0.1')
 
 args = parser.parse_args()
 
