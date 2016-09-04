@@ -11,7 +11,7 @@ XOCamlbuildExtraArgs: '-use-menhir -menhir "menhir --table"'
 
 Library "Crab"
   Path:             src
-  Modules:          Crab
+  Modules:          Crab_compiler
 
 Library "CrabAst"
   FindLibParent:    Crab
@@ -58,7 +58,7 @@ Library "CrabSemantic"
 
 Executable "crab"
   Path:             src
-  MainIs:           crab.ml
+  MainIs:           crab_compiler.ml
   Install:          true
   CompiledObject:   best
   BuildDepends:     Crab.CrabCodegen, Crab.CrabCompile, Crab.CrabParsing, Crab.CrabCommon,

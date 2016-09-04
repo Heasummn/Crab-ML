@@ -24,4 +24,4 @@ myocamlbuild.ml
 META
 
 # The executable
-crab
+crab_compiler
