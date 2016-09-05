@@ -82,15 +82,16 @@ if args.clean:
 
 if args.build:
     call_exit(['oasis', 'setup'])
-    call_exit(['configure'])
+    call_exit(['./configure'])
     call_exit(['clear'])
     call_exit(["make", "build"])
-    call_exit(["mv", "crab_compiler.native", "crab_compiler"])
+    call_exit(["rm", "crab_compiler.native"])
+    call_exit(["mv", "_build/src/crab_compiler.native", "crab_compiler"])
     call_exit(["clear"])
     print()
 
 if args.test:
-    call_exit(["configure", "--enable-tests"])
+    call_exit(["./configure", "--enable-tests"])
     call_exit(["clear"])
     call_exit(['make', 'test'])
     call_exit(["clear"])
@@ -110,22 +111,28 @@ if len(args.filenames) > 0:
             print("Argument " + filename + " is not a file.")
             sys.exit(1)
 
-if args.output:
-    filenames = []
-    for fname in args.filenames:
-        names = fname.split(".")
-        name = names[-2]
-        name += ".o"
-        filenames.append("".join(names[2:]) + name)
-    if args.compile:
-        # We want to compile multiple .o files into one .o file
-        call_exit(["ld", "-r"] + filenames + [main_dir + 'prelude.o', "-o", args.output])
-        # Quietly delete all .o files
-        for fname in filenames:
-            call(["rm", fname], stdout=fnull, stderr=STDOUT)
-    else:
-        # We want to convert a source file into an executable
-        compile(filenames, args.output)
-        # Same thing as above 
-        for fname in filenames:
-            call(["rm", fname], stdout=fnull, stderr=STDOUT)
+# Create an executable
+if args.output is not None:
+    output = args.output
+else:
+    output = "a.out"
+
+filenames = []
+for fname in args.filenames:
+    names = fname.split(".")
+    name = names[-2]
+    name += ".o"
+    filenames.append("".join(names[2:]) + name)
+
+if args.compile:
+    # We want to compile multiple .o files into one .o file
+    call_exit(["ld", "-r"] + filenames + [main_dir + 'prelude.o', "-o", output])
+    # Quietly delete all .o files
+    for fname in filenames:
+        call(["rm", fname], stdout=fnull, stderr=STDOUT)
+else:
+    # We want to convert a source file into an executable
+    compile(filenames, output)
+    # Same thing as above 
+    for fname in filenames:
+        call(["rm", fname], stdout=fnull, stderr=STDOUT)
