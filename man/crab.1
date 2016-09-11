@@ -3,12 +3,11 @@
 .SH NAME
 Crab \- manual page for Crab 0.1
 .SH DESCRIPTION
-usage: Crab [\-h] [\-\-build] [\-\-clean] [\-\-test] [\-\-output OUTPUT] [\-\-compile]
+usage: Crab [\-h] [\-\-output OUTPUT] [\-\-compile] [\-\-version]
 .IP
-[\-\-version]
 filename [filename ...]
 .PP
-Build tool for Crab, a small functional Programming language
+Launch tool for Crab, a small functional Programming language
 .SS "positional arguments:"
 .TP
 filename
@@ -18,16 +17,6 @@ Run Crab program specified
 \fB\-h\fR, \fB\-\-help\fR
 show this help message and exit
 .TP
-\fB\-\-build\fR, \fB\-b\fR
-Build the Crab Compiler
-.TP
-\fB\-\-clean\fR
-Clean the generated files. Run if a strange error
-occurs in building
-.TP
-\fB\-\-test\fR, \fB\-t\fR
-Run tests for Crab Compiler
-.TP
 \fB\-\-output\fR OUTPUT, \fB\-o\fR OUTPUT
 Output executable or object file for Crab
 .TP
@@ -36,3 +25,15 @@ Compile file to an object file
 .TP
 \fB\-\-version\fR
 show program's version number and exit
+.SH "SEE ALSO"
+The full documentation for
+.B Crab
+is maintained as a Texinfo manual.  If the
+.B info
+and
+.B Crab
+programs are properly installed at your site, the command
+.IP
+.B info Crab
+.PP
+should give you access to the complete manual.

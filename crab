@@ -6,6 +6,7 @@ import sys
 import os.path
 import os
 
+VERSION = "0.1"
 main_dir = os.path.dirname(os.path.realpath(__file__)) + "/"
 fnull = open(os.devnull, 'w')
 
@@ -28,7 +29,7 @@ parser.add_argument('--compile', '-c',
                     action='store_true',
                     help="Compile file to an object file")
 
-parser.add_argument('--version', action='version', version='%(prog)s 0.1')
+parser.add_argument('--version', action='version', version='%(prog)s {}'.format(VERSION))
 
 args = parser.parse_args()
 

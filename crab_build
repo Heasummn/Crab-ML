@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
 import argparse
-from subprocess import call
+import platform
 import sys
+from subprocess import call
+
+VERSION = "0.1"
 
 def call_exit(arr):
     ret = call(arr)
@@ -13,7 +16,7 @@ def call_exit(arr):
         sys.exit(1)
 
 parser = argparse.ArgumentParser(
-    prog = "Crab",
+    prog = "Crab Build",
     description="Build system for Crab, a small functional Programming language")
 
 parser.add_argument('--build', '-b',
@@ -29,11 +32,17 @@ parser.add_argument('--clean', '-c',
 
 parser.add_argument('--test', '-t',
                     action="store_true",
-                    help="Run tests for Crab Compiler",
+                    help="Run tests for the Crab Compiler",
                     )
 parser.add_argument("--install", '-i',
                     action="store_true",
                     help="Install the Crab Compiler onto the system")
+
+parser.add_argument("--package", "-p",
+                    action="store_true",
+                    help="Package the Crab Compiler into a tarball")
+
+parser.add_argument('--version', action='version', version='%(prog)s {}'.format(VERSION))
 
 args = parser.parse_args()
 
@@ -57,3 +66,10 @@ if args.test:
 
 if args.install:
     call_exit(["sudo", "bash", "install.sh"])
+
+if args.package:
+    dirname = "crab-{arch}-{version}".format(arch=platform.machine(), version=VERSION)
+    call_exit(["mkdir", "-p", dirname])
+    call_exit(["cp", "crab", "crab_compiler", "install.sh", "prelude.c", dirname])
+    call_exit(["tar", "-cvzf", dirname + ".tar.gz", dirname])
+    call_exit(["rm", "-r", dirname])
