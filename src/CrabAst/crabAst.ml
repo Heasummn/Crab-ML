@@ -29,6 +29,7 @@ and simple_toplevel =
     | Func of ty * (string list * tp) * expr
     | Operator of ty * (string list * tp)  * expr
     | Extern of ty * (string list * tp)
+    | Typedef of string * tp
 
 
 let conv_args args = 
@@ -89,5 +90,7 @@ let rep_func func = match func.data with
                 ""
         end
         ^ "): " ^ Types.rep_type (get_type def) ^ ";"
+    | Typedef(name, value)  -> 
+        "type " ^ name ^ " = " ^ (rep_type value)
 
 let print_ast = List.iter (fun x -> print_endline(rep_func x))

@@ -201,3 +201,7 @@ let annotate_func ctx func =
                 func with data = Extern((name, tp), args);
                 tp;
             }
+        | Typedef(_, value)  ->
+            {
+                func with tp = value
+            }
