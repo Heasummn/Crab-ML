@@ -1,7 +1,7 @@
 open CrabCodegen
 open CrabSemantic
 open CrabCompile
-open ConvTypes
+open CrabPasses
 open Batteries.String
 
 let exit_status = ref 0
@@ -18,10 +18,12 @@ let main () =
         let ctx = CrabEnv.base_ctx in
         let parsed = CrabParsing.process_chan input in
 
-        let typed = convAst ctx parsed in
+        let first_pass = stage1 ctx parsed in
+        let second_pass = stage2 ctx first_pass in
+        let annotated = annotateAST ctx second_pass in
+        let third_pass = stage3 ctx annotated in
 
-        let annotated = annotateAST ctx typed in
-        ignore(codegen_ast ctx annotated);
+        ignore(codegen_ast ctx third_pass);
         init_compiler;
         create_obj output CrabCodegen.glob_module;
     with 

@@ -60,7 +60,7 @@ let conv_toplevel expr =
 	in 
 	(data, expr.position, Types.TEmpty)
 	
-let convAst ctx tree = glob_context := ctx;
+let convTree ctx tree = glob_context := ctx;
 
 	(* Rmove anything that is None *)
 	let data = List.filter

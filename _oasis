@@ -60,7 +60,7 @@ Library "CrabPasses"
   FindLibParent:    Crab
   Path:             src/CrabPasses
   Modules:          ConvTypes
-  BuildDepends:     Crab.CrabEnv, Crab.CrabAst, Crab.CrabParseTree
+  BuildDepends:     Crab.CrabEnv, Crab.CrabAst, Crab.CrabParseTree, Crab.CrabCommon
 
 Library "CrabSemantic"
   FindLibParent:    Crab
