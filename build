@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import argparse
+from subprocess import call
+import sys
+
+def call_exit(arr):
+    ret = call(arr)
+    if ret == 0:
+        return
+    else:
+        print("Program exited with return value {}".format(ret))
+        sys.exit(1)
+
+parser = argparse.ArgumentParser(
+    prog = "Crab",
+    description="Build system for Crab, a small functional Programming language")
+
+parser.add_argument('--build', '-b',
+                    help="Build the Crab Compiler",
+                    action="store_true"
+                    )
+
+parser.add_argument('--clean', '-c',
+                    help="""Clean the generated files.
+                    Run if a strange error occurs in building""",
+                    action="store_true"
+                    )
+
+parser.add_argument('--test', '-t',
+                    action="store_true",
+                    help="Run tests for Crab Compiler",
+                    )
+parser.add_argument("--install", '-i',
+                    action="store_true",
+                    help="Install the Crab Compiler onto the system")
+
+args = parser.parse_args()
+
+if args.clean:
+    call_exit(["make", "clean"])
+    call_exit(["make", "distclean"])
+
+if args.build:
+    call_exit(['oasis', 'setup'])
+    call_exit(['./configure'])
+    call_exit(['clear'])
+    call_exit(["make", "build"])
+    call_exit(["mv", "./crab_compiler.native", "./crab_compiler"])
+    call_exit(["clear"])
+
+if args.test:
+    call_exit(["./configure", "--enable-tests"])
+    call_exit(["clear"])
+    call_exit(['make', 'test'])
+    call_exit(["clear"])
+
+if args.install:
+    call_exit(["sudo", "bash", "install.sh"])

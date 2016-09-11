@@ -11,23 +11,8 @@ fnull = open(os.devnull, 'w')
 
 parser = argparse.ArgumentParser(
     prog = "Crab",
-    description="Build tool for Crab, a small functional Programming language")
+    description="Launch tool for Crab, a small functional Programming language")
 
-parser.add_argument('--build', '-b',
-                    help="Build the Crab Compiler",
-                    action="store_true"
-                    )
-
-parser.add_argument('--clean',
-                    help="""Clean the generated files.
-                    Run if a strange error occurs in building""",
-                    action="store_true"
-                    )
-
-parser.add_argument('--test', '-t',
-                    action="store_true",
-                    help="Run tests for Crab Compiler",
-                    )
 
 parser.add_argument('filenames',
                     metavar='filename',
@@ -49,11 +34,12 @@ args = parser.parse_args()
 
 
 def call_exit(arr):
-    if call(arr) == 0:
+    ret = call(arr)
+    if ret == 0:
         return
     else:
-        print("\nFailure.")
-        sys.exit(0)
+        print("Program exited with return value {}".format(ret))
+        sys.exit(1)
 
 def compile(files, output="a"):
     try:
@@ -67,35 +53,6 @@ def compile(files, output="a"):
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
-
-# If we're using any of the commands for development
-if args.clean or args.build or args.test:
-    if (os.getcwd() + "/" != main_dir):
-        print("You must develop Crab in the directory that the Crab executable is located within")
-        sys.exit(0)
-    call(["rm *.o"], stdout=fnull, stderr=STDOUT, shell=True)
-
-if args.clean:
-    call_exit(["make", "clean"])
-    call_exit(["make", "distclean"])
-    print()
-
-if args.build:
-    call_exit(['oasis', 'setup'])
-    call_exit(['./configure'])
-    call_exit(['clear'])
-    call_exit(["make", "build"])
-    call_exit(["rm", "crab_compiler.native"])
-    call_exit(["mv", "_build/src/crab_compiler.native", "crab_compiler"])
-    call_exit(["clear"])
-    print()
-
-if args.test:
-    call_exit(["./configure", "--enable-tests"])
-    call_exit(["clear"])
-    call_exit(['make', 'test'])
-    call_exit(["clear"])
-    print()
 
 if len(args.filenames) > 0:
     fnames = args.filenames
@@ -119,10 +76,11 @@ else:
 
 filenames = []
 for fname in args.filenames:
-    names = fname.split(".")
-    name = names[-2]
+    directory = os.path.dirname(fname)
+    filename = os.path.basename(fname)
+    name = filename.split(".")[-2]
     name += ".o"
-    filenames.append("".join(names[2:]) + name)
+    filenames.append(directory + name)
 
 if args.compile:
     # We want to compile multiple .o files into one .o file
