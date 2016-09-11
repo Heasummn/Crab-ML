@@ -1,7 +1,5 @@
 %{
-    open CrabAst
-    open Types
-    open CrabEnv
+    open ParseTree
 
     let make_loc start end_pos = Location.make start end_pos
 
@@ -9,7 +7,6 @@
     let make_node node start end_pos = {
         data = node; 
         position = (make_loc start end_pos); 
-        tp = TEmpty
     }
 
     let make_func name args ty body =
@@ -40,7 +37,7 @@
 %left MULT DIV
 %nonassoc UMINUS
 
-%start <CrabAst.toplevel list> program
+%start <ParseTree.toplevel list> program
 %%
 
 /* Program ->
@@ -87,26 +84,14 @@ extern:
  */
 typ:
     | ty = ALPHANUM
-            {
-                (* TODO: when we add types, we have to maintain an Env of them *)
-                match lookup_type CrabEnv.base_type_env (Symbol.symbol ty) with
-                    | Some ty   -> ty
-                    (* TODO: Better errors *)
-                    | None      -> (raise(Error.TypeError("Unknown type " ^ ty)))
-            }
+            { ty }
     ;
 /* Arguments ->
  *      ([NONE | argument, arguments])
  */
 arguments:
     | LPAREN; args = separated_list(COMMA, argument); RPAREN;
-            {
-                if List.length args > 0 then
-                    List.fold_left (fun (prev_name, arrow) (name, arg) ->
-                        (List.append prev_name name, TArrow(arrow, arg))) (List.hd args) (List.tl args)
-                else
-                    ([""], TEmpty)
-            }
+            { List.split args }
     ;
 
 /* Argument ->
@@ -115,7 +100,7 @@ arguments:
 
 argument:
     | arg = ALPHANUM; COLON; ty = typ;
-            { ([arg], ty)  }
+            { (arg, ty)  }
     ;
 /* Expr ->
  *  |   literal | var

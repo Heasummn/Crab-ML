@@ -47,8 +47,14 @@ Library "CrabParsing"
   FindLibParent:    Crab
   Path:             src/CrabParsing
   Modules:          CrabParsing, Lexer, Parser
-  BuildDepends:     menhirLib, Crab.CrabAst, Crab.CrabCommon, Crab.CrabEnv
+  BuildDepends:     menhirLib, Crab.CrabCommon, Crab.CrabPasses
   BuildTools+:      menhir
+
+Library "CrabPasses"
+  FindLibParent:    Crab
+  Path:             src/CrabPasses
+  Modules:          ParseTree, ConvTypes
+  BuildDepends:     Crab.CrabCommon, Crab.CrabEnv, Crab.CrabAst
 
 Library "CrabSemantic"
   FindLibParent:    Crab
@@ -62,7 +68,7 @@ Executable "crab"
   Install:          true
   CompiledObject:   best
   BuildDepends:     Crab.CrabCodegen, Crab.CrabCompile, Crab.CrabParsing, Crab.CrabCommon,
-                    Crab.CrabSemantic
+                    Crab.CrabSemantic, Crab.CrabPasses
 
 Executable test_lexing
   Path:             test/lexing
