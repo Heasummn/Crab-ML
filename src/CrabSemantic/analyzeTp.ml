@@ -18,6 +18,7 @@ let check_int e1 t1 = check_func (fun (x) -> x == TInt || x == TFloat) t1 () (Ty
 
 let annotate_lit lit =
     let inferred =  match lit.data with
+        | Bool _            -> TBool
         | Integer _         -> TInt        
         | Float _           -> TFloat
     in

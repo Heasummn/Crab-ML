@@ -11,20 +11,25 @@ type ctx = {types: type_env; vars: var_env; funcs: func_env}
 
 let types = 
 [
-    (Symbol.symbol "int",Types. TInt);
-    (Symbol.symbol "float", Types.TFloat)
+    (Symbol.symbol "int", Types.TInt);
+    (Symbol.symbol "float", Types.TFloat);
+    (Symbol.symbol "bool", Types.TBool)
 ]
 
 let ops = 
 [
-    (Symbol.symbol "+", (TArrow(TInt, TInt), TInt));    
-    (Symbol.symbol "+", (TArrow(TFloat, TFloat), TFloat)); 
-    (Symbol.symbol "-", (TArrow(TInt, TInt), TInt));    
+    (* TODO: Replace this with a module once we add Modules. *)
+    (Symbol.symbol "+", (TArrow(TInt, TInt), TInt));
+    (Symbol.symbol "+", (TArrow(TFloat, TFloat), TFloat));
+    (Symbol.symbol "-", (TArrow(TInt, TInt), TInt));
     (Symbol.symbol "-", (TArrow(TFloat, TFloat), TFloat));
-    (Symbol.symbol "*", (TArrow(TInt, TInt), TInt));    
-    (Symbol.symbol "*", (TArrow(TFloat, TFloat), TFloat));    
-    (Symbol.symbol "/", (TArrow(TInt, TInt), TInt));    
-    (Symbol.symbol "/", (TArrow(TFloat, TFloat), TFloat));    
+    (Symbol.symbol "*", (TArrow(TInt, TInt), TInt));
+    (Symbol.symbol "*", (TArrow(TFloat, TFloat), TFloat));
+    (Symbol.symbol "/", (TArrow(TInt, TInt), TInt));
+    (Symbol.symbol "/", (TArrow(TFloat, TFloat), TFloat));
+
+    (Symbol.symbol "<", (TArrow(TInt, TInt), TBool));
+    (Symbol.symbol ">", (TArrow(TInt, TInt), TBool));
 ]
 
 let base_type_env = Table.of_list types

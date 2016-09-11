@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 0e6819005c1193bbda0fdba184735747)
+# DO NOT EDIT (digest: 945563d10405015ebbd7bbca71970240)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -40,12 +40,16 @@ true: annot, bin_annot
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabAst
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabCommon
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabEnv
+# Library CrabParseTree
+"src/CrabParseTree/CrabParseTree.cmxs": use_CrabParseTree
+<src/CrabParseTree/*.ml{,i,y}>: use_CrabCommon
 # Library CrabPasses
 "src/CrabPasses/CrabPasses.cmxs": use_CrabPasses
 <src/CrabPasses/*.ml{,i,y}>: pkg_batteries
 <src/CrabPasses/*.ml{,i,y}>: use_CrabAst
 <src/CrabPasses/*.ml{,i,y}>: use_CrabCommon
 <src/CrabPasses/*.ml{,i,y}>: use_CrabEnv
+<src/CrabPasses/*.ml{,i,y}>: use_CrabParseTree
 # Library CrabParsing
 "src/CrabParsing/CrabParsing.cmxs": use_CrabParsing
 <src/CrabParsing/*.ml{,i,y}>: pkg_batteries
@@ -53,6 +57,7 @@ true: annot, bin_annot
 <src/CrabParsing/*.ml{,i,y}>: use_CrabAst
 <src/CrabParsing/*.ml{,i,y}>: use_CrabCommon
 <src/CrabParsing/*.ml{,i,y}>: use_CrabEnv
+<src/CrabParsing/*.ml{,i,y}>: use_CrabParseTree
 <src/CrabParsing/*.ml{,i,y}>: use_CrabPasses
 # Library CrabSemantic
 "src/CrabSemantic/CrabSemantic.cmxs": use_CrabSemantic
@@ -72,6 +77,7 @@ true: annot, bin_annot
 <src/crab_compiler.{native,byte}>: use_CrabCommon
 <src/crab_compiler.{native,byte}>: use_CrabCompile
 <src/crab_compiler.{native,byte}>: use_CrabEnv
+<src/crab_compiler.{native,byte}>: use_CrabParseTree
 <src/crab_compiler.{native,byte}>: use_CrabParsing
 <src/crab_compiler.{native,byte}>: use_CrabPasses
 <src/crab_compiler.{native,byte}>: use_CrabSemantic
@@ -86,6 +92,7 @@ true: annot, bin_annot
 <src/*.ml{,i,y}>: use_CrabCommon
 <src/*.ml{,i,y}>: use_CrabCompile
 <src/*.ml{,i,y}>: use_CrabEnv
+<src/*.ml{,i,y}>: use_CrabParseTree
 <src/*.ml{,i,y}>: use_CrabParsing
 <src/*.ml{,i,y}>: use_CrabPasses
 <src/*.ml{,i,y}>: use_CrabSemantic
@@ -97,6 +104,7 @@ true: annot, bin_annot
 <test/lexing/test_lex.{native,byte}>: use_CrabAst
 <test/lexing/test_lex.{native,byte}>: use_CrabCommon
 <test/lexing/test_lex.{native,byte}>: use_CrabEnv
+<test/lexing/test_lex.{native,byte}>: use_CrabParseTree
 <test/lexing/test_lex.{native,byte}>: use_CrabParsing
 <test/lexing/test_lex.{native,byte}>: use_CrabPasses
 <test/lexing/*.ml{,i,y}>: pkg_batteries
@@ -106,6 +114,7 @@ true: annot, bin_annot
 <test/lexing/*.ml{,i,y}>: use_CrabAst
 <test/lexing/*.ml{,i,y}>: use_CrabCommon
 <test/lexing/*.ml{,i,y}>: use_CrabEnv
+<test/lexing/*.ml{,i,y}>: use_CrabParseTree
 <test/lexing/*.ml{,i,y}>: use_CrabParsing
 <test/lexing/*.ml{,i,y}>: use_CrabPasses
 # OASIS_STOP

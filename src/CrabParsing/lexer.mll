@@ -25,10 +25,7 @@ let extern_word = "extern"
 let type_def = "type"
 
 (* All operators *)
-let all_ops = ['+''-''/''*''!']
-
-(* Non mathematical operators.  *)
-let no_math_ops = ['!']
+let all_ops = ['+''-''/''*''!''<''>']
 
 (* An operator *)
 let ops = all_ops+

@@ -1,5 +1,5 @@
 %{
-    open ParseTree
+    open CrabParseTree
 
     let make_loc start end_pos = Location.make start end_pos
 
@@ -37,7 +37,7 @@
 %left MULT DIV
 %nonassoc UMINUS
 
-%start <ParseTree.toplevel list> program
+%start <CrabParseTree.toplevel list> program
 %%
 
 /* Program ->

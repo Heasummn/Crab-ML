@@ -1,6 +1,7 @@
 type tp = 
     | TInt 
-    | TFloat 
+    | TFloat
+    | TBool 
     | TArrow of tp * tp
     | TEmpty
 

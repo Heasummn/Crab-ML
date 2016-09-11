@@ -1,1 +1,1 @@
-val convAst : CrabEnv.ctx -> ParseTree.toplevel list -> CrabAst.toplevel list
+val convAst : CrabEnv.ctx -> CrabParseTree.toplevel list -> CrabAst.toplevel list

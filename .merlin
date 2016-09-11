@@ -5,6 +5,7 @@ S src/CrabCodegen
 S src/CrabCommon
 S src/CrabCompile
 S src/CrabEnv
+S src/CrabParseTree
 S src/CrabParsing
 S src/CrabPasses
 S src/CrabSemantic
@@ -16,6 +17,7 @@ B _build/src/CrabCodegen
 B _build/src/CrabCommon
 B _build/src/CrabCompile
 B _build/src/CrabEnv
+B _build/src/CrabParseTree
 B _build/src/CrabParsing
 B _build/src/CrabPasses
 B _build/src/CrabSemantic

@@ -43,6 +43,12 @@ Library "CrabEnv"
   Modules:          Symbol, Types
   BuildDepends:     batteries, Crab.CrabCommon
 
+Library "CrabParseTree"
+  FindLibParent:    Crab
+  Path:             src/CrabParseTree
+  Modules:          CrabParseTree
+  BuildDepends:     Crab.CrabCommon
+
 Library "CrabParsing"
   FindLibParent:    Crab
   Path:             src/CrabParsing
@@ -53,8 +59,8 @@ Library "CrabParsing"
 Library "CrabPasses"
   FindLibParent:    Crab
   Path:             src/CrabPasses
-  Modules:          ParseTree, ConvTypes
-  BuildDepends:     Crab.CrabCommon, Crab.CrabEnv, Crab.CrabAst
+  Modules:          ConvTypes
+  BuildDepends:     Crab.CrabEnv, Crab.CrabAst, Crab.CrabParseTree
 
 Library "CrabSemantic"
   FindLibParent:    Crab
@@ -68,7 +74,7 @@ Executable "crab"
   Install:          true
   CompiledObject:   best
   BuildDepends:     Crab.CrabCodegen, Crab.CrabCompile, Crab.CrabParsing, Crab.CrabCommon,
-                    Crab.CrabSemantic, Crab.CrabPasses
+                    Crab.CrabSemantic, Crab.CrabPasses, Crab.CrabParseTree
 
 Executable test_lexing
   Path:             test/lexing

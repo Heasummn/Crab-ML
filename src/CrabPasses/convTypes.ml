@@ -1,5 +1,5 @@
 open CrabEnv
-open ParseTree
+open CrabParseTree
 open Error
 
 (* Ew globals. TODO: Remove this. *)
@@ -14,6 +14,7 @@ let conv_lit lit =
 	let data = match lit.data with
 		| Integer(x)		-> CrabAst.Integer(x)
 		| Float(x)			-> CrabAst.Float(x)
+		| Bool(x)			-> CrabAst.Bool(x)
 	in
 	{ CrabAst.data = data; CrabAst.position = lit.position; CrabAst.tp = Types.TEmpty }
 

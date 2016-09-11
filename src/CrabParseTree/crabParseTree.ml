@@ -8,6 +8,7 @@ type literal = simple_literal annotation
 and simple_literal = 
     | Integer of int
     | Float of float
+    | Bool of bool
 
 type expr = simple_expr annotation 
 and simple_expr = 
@@ -39,6 +40,7 @@ let get_type = snd
 let rep_literal lit = match lit.data with 
     | Integer(x)    -> string_of_int x
     | Float(x)      -> string_of_float x
+    | Bool(x)       -> string_of_bool x
 
 let rec rep_expr expr = match expr.data with
     | Lit(e1)           -> rep_literal e1

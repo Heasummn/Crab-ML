@@ -14,6 +14,7 @@ let dump_mod = dump_module
 (* TODO: Replace this with a Hash Table *)
 let int_type = integer_type context 32
 let float_type = double_type context
+let bool_type = integer_type context 1
 let void = void_type context
 
 (* Prefixes *)
@@ -23,10 +24,21 @@ let type_to_llvm = function
     | TEmpty    -> void
     | TInt      -> int_type
     | TFloat    -> float_type
+    | TBool     -> bool_type
     | TArrow _  -> assert false
 
+let convert_iop = function
+    | "<"   -> Icmp.Slt
+    | ">"   -> Icmp.Sgt
+    | _     -> assert false
 
-let codegen_literal literal = match literal.data with 
+let codegen_literal literal = match literal.data with
+    | Bool x        -> 
+        begin
+            match x with
+                | true  -> const_int bool_type 1
+                | false -> const_int bool_type 0
+        end
     | Integer x     -> const_int int_type x
     | Float x       -> const_float float_type x
 
@@ -59,11 +71,15 @@ and codegen_op ctx expr =
         (func expr1 expr2 name builder) 
     in
     
-    let gen_builtin_op op e1 e2 = match op with 
+    let gen_builtin_op op e1 e2 = 
+    match op with 
             | "+"   -> a_gen_op build_add build_fadd e1 e2 "addtmp"
             | "-"   -> a_gen_op build_sub build_fsub e1 e2 "subtmp"
             | "*"   -> a_gen_op build_mul build_fmul e1 e2 "multmp"
             | "/"   -> a_gen_op build_sdiv build_fdiv e1 e2 "divtmp"
+            | "<" 
+            | ">"   -> build_icmp (convert_iop op)
+                (codegen_expr ctx e1) (codegen_expr ctx e2) "cmptmp" builder
             | _ -> assert false
     in
     

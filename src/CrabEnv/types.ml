@@ -2,13 +2,15 @@ open Batteries
 
 type tp = 
     | TInt
-    | TFloat 
+    | TFloat
+    | TBool 
     | TArrow of tp * tp
     | TEmpty
 
 let rec rep_type = function
 	| TInt              -> "int"
 	| TFloat            -> "float"
+    | TBool             -> "bool"
     | TArrow(tp1, tp2)  -> rep_type tp1 ^ " -> " ^ rep_type tp2
 	| TEmpty	        -> "empty"
 
