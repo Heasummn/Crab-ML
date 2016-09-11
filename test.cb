@@ -1,15 +1,17 @@
-extern pint(x: int): int;
+type id = float;
 
-operator +!(x: int, y: int): int = 
+extern pint(x: id): int
+
+operator +! (x: int, y: int): int =
     x + y + 1
 
-operator !(x:int, y: int): int = 
-    y
-
-def foo(x: int, y: int): int =
+operator ! (x: int, y: int): int = 
     y;
 
-def bar(foobar: int): int =
+def foo (x: id, y: int): id =
+    y;
+
+def bar (foobar: int): int =
     let x: int = foobar in
         let x: int = 5 in
             x + (x + foobar);

@@ -22,7 +22,7 @@ let operator_word = "operator"
 let let_stmt = "let"
 let in_stmt = "in"
 let extern_word = "extern"
-
+let type_def = "type"
 
 (* All operators *)
 let all_ops = ['+''-''/''*''!']
@@ -58,6 +58,7 @@ rule read =
     | in_stmt       { IN }
     | operator_word { OP }
     | extern_word   { EXTERN }
+    | type_def      { TYPE_KEY }
     
     | ops           { OPERATOR(Lexing.lexeme lexbuf) }
 

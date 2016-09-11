@@ -22,7 +22,7 @@
 %token <string> OPERATOR
 
 /* Keywords */
-%token DEF, LET, IN, OP, EXTERN
+%token DEF, LET, IN, OP, EXTERN, TYPE_KEY
 
 /* Operators */
 %token LPAREN RPAREN
@@ -59,6 +59,8 @@ funcs:
         { f::fs }
     | f = extern; fs = funcs;
         { f::fs }
+    | f = typedef; fs = funcs;
+        { f::fs }
     ;
 
 /* Func ->
@@ -79,11 +81,17 @@ op:
 extern:
     | EXTERN; name = ALPHANUM; args = arguments; COLON; ty = typ; option(SEMI);
         { make_node (Extern((name, ty), args)) $startpos $endpos }
+
+typedef:
+    | TYPE_KEY; name = ALPHANUM; EQUAL; ty = typ; option(SEMI)
+        { make_node (Typedef(name, ty)) $startpos $endpos }
 /* Type ->
  *      ALPHANUM
  */
 typ:
     | ty = ALPHANUM
+            { ty }
+    | LPAREN; ty = typ; RPAREN;
             { ty }
     ;
 /* Arguments ->

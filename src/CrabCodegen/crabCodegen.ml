@@ -16,8 +16,6 @@ let int_type = integer_type context 32
 let float_type = double_type context
 let void = void_type context
 
-let build_nop = build_add (const_int int_type 0) (const_int int_type 0) "nop"
-
 (* Prefixes *)
 let op_prefix = "__crab_op_"
 
@@ -149,8 +147,6 @@ let codegen_proto func =
             codegen_func_proto ((op_prefix ^ name), ty) args 
         | Extern(def, args)     -> 
             codegen_func_proto def args
-        | Typedef(_, _)  ->
-            build_nop builder
 
 let codegen_func ctx func = match func.data with 
     | Func(_, _, body)  ->
@@ -186,8 +182,6 @@ let codegen_func ctx func = match func.data with
         end
     | Extern(_, _)      ->
         codegen_proto func
-    | Typedef(_, _)     ->
-        build_nop builder
 
 let codegen_ast ctx tree =
     List.map (codegen_func ctx) tree

@@ -15,6 +15,7 @@ let rec rep_type = function
 let rep_var name = fst name ^ ": " ^ rep_type (snd name)
 
 let rec arrow_list = function
+    | TEmpty            -> []
     | TArrow(tp1, tp2)  -> arrow_list tp1 @ arrow_list tp2
     | x                 -> [x]
 
