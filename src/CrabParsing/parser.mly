@@ -18,6 +18,7 @@
 
 %token <int>    INT
 %token <float>  FLOAT
+%token <bool>   BOOL
 %token <string> ALPHANUM
 %token <string> OPERATOR
 
@@ -159,5 +160,7 @@ literal:
             { make_node (Integer i) $startpos $endpos }
     | f = FLOAT                         
             { make_node (Float f) $startpos $endpos }
+    | b = BOOL
+            { make_node (Bool b) $startpos $endpos }
     ;
 

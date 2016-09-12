@@ -8,6 +8,8 @@ let digit = ['0'-'9']
 let int = digit+
 let e = ['e' 'E']
 let float = int '.' int e? '-'? int?
+let bool = ('t'|'T')"rue" | ('f'|'F')"alse"
+
 let letter = ['a'-'z''A'-'Z']
 let alpha = letter+ (letter '_')*
 let alphanum = alpha+digit*
@@ -34,6 +36,7 @@ rule read =
     parse
     | int           { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | float         { FLOAT (float_of_string (Lexing.lexeme lexbuf)) }
+    | bool          { BOOL (bool_of_string (String.lowercase_ascii (Lexing.lexeme lexbuf))) }
 
     | whitespace    { read lexbuf }
     | newline       { Lexing.new_line lexbuf; read lexbuf }

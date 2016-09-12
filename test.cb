@@ -19,4 +19,5 @@ def increment_infinite(): int =
 		print(n + 1) ! increment_infinite()
 
 def main(): int = 
-	increment_infinite();
+
+	print(True) ! increment_infinite();
