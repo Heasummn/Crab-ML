@@ -71,7 +71,11 @@ and codegen_op ctx expr =
         (func expr1 expr2 name builder) 
     in
     
-    let gen_builtin_op op e1 e2 = 
+    let gen_builtin_op op e1 e2 =
+    (*  The operator is mangled, but since we know the size of the args,
+        which is 2, we can unmangle it. 
+        There is 1 letter for each arg, and a final 2 for the num of args *)
+    let op = String.sub op 0 (String.length op - 3) in
     match op with 
             | "+"   -> a_gen_op build_add build_fadd e1 e2 "addtmp"
             | "-"   -> a_gen_op build_sub build_fsub e1 e2 "subtmp"
@@ -85,10 +89,11 @@ and codegen_op ctx expr =
     
     let gen_user_op op e1 e2 = 
         let callee = match lookup_function (op_prefix ^ op) glob_module with
-            | Some callee   -> callee 
-            | None          -> assert false
+                | Some callee   -> callee 
+                | None          -> assert false
         in
-        let args =  codegen_expr ctx e1 :: codegen_expr ctx e2 :: [] in
+        let e1 = codegen_expr ctx e1 and e2 = codegen_expr ctx e2 in
+        let args =  e1 :: e2 :: [] in
         let args = Array.of_list args in
         build_call callee args "calltmp" builder
     in
@@ -96,7 +101,10 @@ and codegen_op ctx expr =
     let gen_helper = match expr.data with
         | BinOp(e1, op, e2) ->
                 let len =  List.length (List.filter (fun (try_op, (args, ret)) ->
-                    Symbol.name try_op = op && args = TArrow(e1.tp, e2.tp) && ret = expr.tp) CrabEnv.ops) in
+                    (*  The names are mangled by the Alpha Conversion pass
+                        So we need to mangle the name of the builtin operator too *)
+                    Common.mangle_name (Symbol.name try_op) (arrow_list args) = op 
+                    && args = TArrow(e1.tp, e2.tp) && ret = expr.tp) CrabEnv.ops) in
                 if len >= 1 then
                     (* This is a built in operator *)
                     gen_builtin_op op e1 e2 
@@ -140,7 +148,7 @@ and codegen_assign ctx ((name, ty), expr, body) =
     
 
 let codegen_proto func =
-    let codegen_func_proto def args = 
+    let codegen_func_proto def args =
         let list_of_args = if snd args <> TEmpty then List.combine (fst args) (arrow_list (snd args)) else [] in
         let arg_array = Array.of_list list_of_args in
         let arg_type = Array.map (fun x -> type_to_llvm (get_type x)) arg_array

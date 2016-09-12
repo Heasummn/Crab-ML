@@ -81,4 +81,5 @@ and nested_comment level =
     | "(*"      { nested_comment (level+1) lexbuf }
     | "*)"      { if level = 1 then read lexbuf else nested_comment (level-1) lexbuf }
     | newline   { Lexing.new_line lexbuf; nested_comment level lexbuf }
+    | eof       { raise(Error.SyntaxError("Unexpected EOF in comment")) }
     | _         { nested_comment level lexbuf }

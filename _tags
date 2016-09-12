@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 945563d10405015ebbd7bbca71970240)
+# DO NOT EDIT (digest: 2b62945ee65403ba1cced584143dbc09)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,8 +16,6 @@ true: annot, bin_annot
 "_darcs": not_hygienic
 # Library Crab
 "src/Crab.cmxs": use_Crab
-# Library CrabCommon
-"src/CrabCommon/CrabCommon.cmxs": use_CrabCommon
 # Library CrabCompile
 "src/CrabCompile/CrabCompile.cmxs": use_CrabCompile
 <src/CrabCompile/*.ml{,i,y}>: pkg_llvm
@@ -27,6 +25,12 @@ true: annot, bin_annot
 "src/CrabEnv/CrabEnv.cmxs": use_CrabEnv
 <src/CrabEnv/*.ml{,i,y}>: pkg_batteries
 <src/CrabEnv/*.ml{,i,y}>: use_CrabCommon
+<src/CrabEnv/*.ml{,i,y}>: use_CrabEnv
+# Library CrabCommon
+"src/CrabCommon/CrabCommon.cmxs": use_CrabCommon
+<src/CrabCommon/*.ml{,i,y}>: pkg_batteries
+<src/CrabCommon/*.ml{,i,y}>: use_CrabCommon
+<src/CrabCommon/*.ml{,i,y}>: use_CrabEnv
 # Library CrabAst
 "src/CrabAst/CrabAst.cmxs": use_CrabAst
 <src/CrabAst/*.ml{,i,y}>: pkg_batteries
@@ -42,7 +46,9 @@ true: annot, bin_annot
 <src/CrabCodegen/*.ml{,i,y}>: use_CrabEnv
 # Library CrabParseTree
 "src/CrabParseTree/CrabParseTree.cmxs": use_CrabParseTree
+<src/CrabParseTree/*.ml{,i,y}>: pkg_batteries
 <src/CrabParseTree/*.ml{,i,y}>: use_CrabCommon
+<src/CrabParseTree/*.ml{,i,y}>: use_CrabEnv
 # Library CrabPasses
 "src/CrabPasses/CrabPasses.cmxs": use_CrabPasses
 <src/CrabPasses/*.ml{,i,y}>: pkg_batteries

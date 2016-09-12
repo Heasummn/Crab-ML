@@ -1,16 +1,22 @@
 type id = int;
 
-extern pint(x: id): int
-extern pbool(x: bool): int
+extern print(x: id): int
+extern print(x: bool): bool
+extern get_int(): int;
 
 operator +! (x: int, y: int): int =
     x + y + 1
 
-operator ! (x: int, y: int): int = 
+
+operator ! (x: bool, y: int): int = 
 	y
 
-def afunc(): int = 
-    3 +! 5;        
+operator ! (x: int, y: int): int =
+	y
+	
+def increment_infinite(): int =
+	let n: int = get_int() in
+		print(n + 1) ! increment_infinite()
 
 def main(): int = 
-   pbool(4 > 5) ! pbool(4 < 5)
+	increment_infinite();

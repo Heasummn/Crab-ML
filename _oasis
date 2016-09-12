@@ -29,7 +29,8 @@ Library "CrabCodegen"
 Library "CrabCommon"
   FindLibParent:    Crab
   Path:             src/CrabCommon
-  Modules:          Error, Location
+  Modules:          Error, Location, Common
+  BuildDepends:     Crab.CrabEnv
 
 Library "CrabCompile"
   FindLibParent:    Crab
@@ -59,7 +60,7 @@ Library "CrabParsing"
 Library "CrabPasses"
   FindLibParent:    Crab
   Path:             src/CrabPasses
-  Modules:          ConvTypes
+  Modules:          ConvTypes, AlphaConv
   BuildDepends:     Crab.CrabEnv, Crab.CrabAst, Crab.CrabParseTree, Crab.CrabCommon
 
 Library "CrabSemantic"

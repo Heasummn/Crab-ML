@@ -36,13 +36,13 @@ let rec annotate_expr ctx expr =
                 let t_exprs = Types.list_arrow (List.map (fun x -> x.tp) exprs) in
                 begin
                 match MultiTable.lookup (Symbol.symbol name) !func_context.funcs with
-                    | Some result   -> let func = BatSet.filter (fun (args, _) -> 
+                    | Some result   -> let func = BatSet.filter (fun (args, _) ->
                             args = t_exprs) result in
                     let func = 
                         if BatSet.is_empty func then
                             (raise(TypeError("No function found with name " ^ name ^ " and arguments " ^ rep_type t_exprs)))
                         else
-                            fst (BatSet.pop result)
+                            fst (BatSet.pop func)
                     in
                         (Call(name, exprs), snd func)
                     | None          -> raise(TypeError("Unknown function " ^ name));
@@ -160,7 +160,7 @@ let annotate_func ctx func =
     let inferred = annotate_expr ctx body in
         check tp inferred.tp (TypeError("In function " ^ name ^ 
             ", expected type " ^ rep_type tp ^ ", but got type " ^ rep_type inferred.tp));
-        {   func with data = Func((name, tp), args, inferred);
+        {   func with data = Func((name, inferred.tp), args, inferred);
             tp = (inferred).tp
         }
     
@@ -187,7 +187,7 @@ let annotate_func ctx func =
             check ty inferred.tp (TypeError("In operator " ^ name ^ 
                 ", expected type " ^ rep_type ty ^ ", but got type " ^ rep_type inferred.tp));
         
-            {   func with data = Operator((name, ty), args, inferred);
+            {   func with data = Operator((name, inferred.tp), args, inferred);
                 tp = (inferred).tp
             }
 

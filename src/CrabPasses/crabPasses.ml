@@ -5,5 +5,5 @@
 *)
 
 let stage1 ctx tree = ConvTypes.convTree ctx tree
-let stage2 _ = Common.unity
-let stage3 _ = Common.unity
+let stage2 _ ast = Common.unity ast
+let stage3 _ ast = AlphaConv.alphaConv ast
