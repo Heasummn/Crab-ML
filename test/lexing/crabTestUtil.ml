@@ -5,17 +5,29 @@ open Parser
 open Batteries
 
 let extract token = match token with
-    | INT(x)    -> string_of_int x
-    | FLOAT(x)  -> string_of_float x
+    | INT(x)        -> string_of_int x
+    | FLOAT(x)      -> string_of_float x
+    | OPERATOR (x)  -> x
+    | ALPHANUM(x)   -> x
 
-    | PLUS      -> "+"
-    | MINUS     -> "-"
-    | MULT      -> "*"
-    | DIV       -> "/"
-    | LPAREN    -> "("
-    | RPAREN    -> ")"      
-    | SEMI      -> ";"
-    | EOF       -> "EOF"
+    | PLUS          -> "+"
+    | MINUS         -> "-"
+    | MULT          -> "*"
+    | DIV           -> "/"
+    | EQUAL         -> "="
+    | LPAREN        -> "("
+    | RPAREN        -> ")"      
+    | SEMI          -> ";"
+    | COLON         -> ":"
+    | COMMA         -> ","
+    | EOF           -> "EOF"
+
+    | DEF           -> "def"
+    | EXTERN        -> "extern"
+    | IN            -> "in"
+    | LET           -> "let"
+    | TYPE_KEY      -> "type"
+    | OP            -> "operator"
 
 let lex lexbuf = 
     let rec recurse lexbuf tokens =
