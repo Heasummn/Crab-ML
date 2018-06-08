@@ -63,8 +63,11 @@ if len(args.filenames) > 0:
             try:
                 call_exit(["crab_compiler", filename])
             except FileNotFoundError:
-                print("Please build before running, or add Crab to your PATH variable.")
-                sys.exit(0)
+                try:
+                    call_exit(["./crab_compiler", filename])
+                except FileNotFoundError: 
+                    print("Please build before running, or add Crab to your PATH variable.")
+                    sys.exit(0)
         else:
             print("Argument " + filename + " is not a file.")
             sys.exit(1)
